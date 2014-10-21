@@ -30,7 +30,7 @@ public class ClientThread implements Runnable
             Action action = message.getAction();
 
             if (action.equals(Action.CONNECT)) {
-                //depois...
+                clientService.connect((String) message.getData());
             }
             
             socket.close();
