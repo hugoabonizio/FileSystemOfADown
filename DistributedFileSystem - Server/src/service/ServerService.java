@@ -61,7 +61,7 @@ public class ServerService
             
             Message message = new Message();
             message.setSrc(me);
-            message.setData("I'm server");
+            message.setData("I'm a server");
             message.setAction(Message.Action.CONNECT);
             connection.send(message);
         } catch (IOException ex)
