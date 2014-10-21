@@ -332,7 +332,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(navigationBar.getText());
         m.setSrc(clientService.getMe());
 
-        Connection.send(clientService.getServerAddress(), m);
+        //Connection.send(clientService.getServerAddress(), m);
     }
 
     private void extraInits() {
