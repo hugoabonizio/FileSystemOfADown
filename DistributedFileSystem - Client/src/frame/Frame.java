@@ -2,10 +2,13 @@ package frame;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import service.ClientService;
 import util.Connection;
@@ -308,7 +311,11 @@ public class Frame extends javax.swing.JFrame {
         m.setSrc(clientService.getMe());
 
         for (String s : serverList) {
-            Connection.send(s, m);
+            try {
+                Connection.send(s, m);
+            } catch (IOException ex) {
+                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         //alterar column da JTable
     }//GEN-LAST:event_btnSaveActionPerformed
@@ -326,9 +333,12 @@ public class Frame extends javax.swing.JFrame {
             m.setSrc(clientService.getMe());
 
             for (String s : serverList) {
-                Connection.send(s, m);
+                try {
+                    Connection.send(s, m);
+                } catch (IOException ex) {
+                    Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            //alterar column da JTable
         }
     }//GEN-LAST:event_txtNameKeyPressed
 
@@ -351,7 +361,11 @@ public class Frame extends javax.swing.JFrame {
         m.setSrc(clientService.getMe());
 
         for (String s : serverList) {
-            Connection.send(s, m);
+            try {
+                Connection.send(s, m);
+            } catch (IOException ex) {
+                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         //adicionar row a JTable
     }//GEN-LAST:event_btnNewFolderActionPerformed
@@ -377,7 +391,11 @@ public class Frame extends javax.swing.JFrame {
         m.setSrc(clientService.getMe());
 
         for (String s : serverList) {
-            Connection.send(s, m);
+            try {
+                Connection.send(s, m);
+            } catch (IOException ex) {
+                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         //adicionar row a JTable
     }//GEN-LAST:event_btnNewFileActionPerformed
@@ -444,7 +462,11 @@ public class Frame extends javax.swing.JFrame {
         m.setSrc(clientService.getMe());
 
         String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
-        Connection.send(address, m);
+        try {
+            Connection.send(address, m);
+        } catch (IOException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void requestRead(entity.File file) {
@@ -453,8 +475,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        Connection.send(serverList.get(0), m);
-        //E quando o servidor está inativo?
+        trySendRequest(m);
     }
 
     private void requestGetAttributes(entity.File file) {
@@ -463,8 +484,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        Connection.send(serverList.get(0), m);
-        //E quando o servidor está inativo?
+        trySendRequest(m);
     }
 
     private void requestRmdir(entity.File file) {
@@ -474,7 +494,11 @@ public class Frame extends javax.swing.JFrame {
         m.setSrc(clientService.getMe());
 
         for (String s : serverList) {
-            Connection.send(s, m);
+            try {
+                Connection.send(s, m);
+            } catch (IOException ex) {
+                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         //remover row da JTable
     }
@@ -486,9 +510,24 @@ public class Frame extends javax.swing.JFrame {
         m.setSrc(clientService.getMe());
 
         for (String s : serverList) {
-            Connection.send(s, m);
+            try {
+                Connection.send(s, m);
+            } catch (IOException ex) {
+                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         //remover row da JTable
+    }
+
+    private void trySendRequest(Message m) {
+        for (String s : serverList) {
+            try {
+                Connection.send(s, m);
+                break;
+            } catch (IOException ex) {
+                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     public List<String> getServerList() {

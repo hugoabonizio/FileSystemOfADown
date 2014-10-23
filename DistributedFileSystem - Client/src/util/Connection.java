@@ -55,7 +55,7 @@ public class Connection {
         this.ip = ip;
     }
 
-    public static void send(String dest, Object obj) {
+    public static void send(String dest, Object obj) throws IOException {
         String ip = dest.split(":")[0];
         int port = new Integer(dest.split(":")[1]);
         try {
@@ -63,7 +63,7 @@ public class Connection {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(obj);
         } catch (IOException ex) {
-            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
         }
 
     }
