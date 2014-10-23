@@ -51,10 +51,6 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="panelDetails" alignment="1" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="btnBack" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnForward" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="navigationBar" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnRefresh" min="-2" max="-2" attributes="0"/>
@@ -87,8 +83,6 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btnBack" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnForward" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnRefresh" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="navigationBar" alignment="3" max="32767" attributes="0"/>
                   </Group>
@@ -115,18 +109,6 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="btnBack">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Voltar"/>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnForward">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Avan&#xe7;ar"/>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JTextField" name="navigationBar">
           <Events>
             <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="navigationBarKeyPressed"/>

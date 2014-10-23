@@ -3,9 +3,6 @@ package thread;
 import com.almworks.sqlite4java.SQLiteException;
 import entity.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.ServerService;
@@ -31,18 +28,7 @@ public class ListenerSocket implements Runnable {
                 Action action = message.getAction();
 
                 if (action.equals(Action.CONNECT)) {
-                    String ip = message.getSrc().split(":")[0];
-                    int port = Integer.parseInt(message.getSrc().split(":")[1]);
-
-                    Socket socket = new Socket(ip, port);
-                    Connection c = new Connection();
-                    c.setOutput(new ObjectOutputStream(socket.getOutputStream()));
-                    c.setInput(new ObjectInputStream(socket.getInputStream()));
-                    c.setIp(ip);
-                    c.setPort(port);
-                    c.setSocket(socket);
-
-                    serverService.getcSet().add(c);
+                    //Quando o supervisor manda a tabela temporaria do momento...
                 } else if (action.equals(Action.READ)) {
                     try {
                         File file = (File) message.getData();
@@ -78,8 +64,8 @@ public class ListenerSocket implements Runnable {
                     }
                 } else if (action.equals(Action.DELETE)) {
                     try {
-                        Integer id = (Integer) message.getData();
-                        serverService.getFileDAO().delete(id);
+                        File file = (File) message.getData();
+                        serverService.getFileDAO().delete(file);
                         answer = new Message();
                         answer.setAction(Action.DELETE);
                         answer.setData("Arquivo deletado com sucesso!");
@@ -161,7 +147,7 @@ public class ListenerSocket implements Runnable {
                     answer = message;
                     answer.setSrc(serverService.getMe());
                     answer.setData("ESTOU VIVO POR ENQUANTO...");
-                    Connection.send(message.getSrc(), answer);
+                    connection.send(answer);
                 }
             }
         } catch (IOException ex) {

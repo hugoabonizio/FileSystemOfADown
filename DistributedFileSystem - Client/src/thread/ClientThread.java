@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.ClientService;
+import util.Connection;
 import util.Message;
 import util.Message.Action;
 
@@ -29,8 +30,14 @@ public class ClientThread implements Runnable
             message = (Message) new ObjectInputStream(socket.getInputStream()).readObject();
             Action action = message.getAction();
 
-            if (action.equals(Action.CONNECT)) {
-                clientService.connect((String) message.getData());
+            if (action.equals(Action.CONNECT) || action.equals(Action.DISCONNECT)) {
+                clientService.setServer((Connection) message.getData());
+            } else if (action.equals(Action.READDIR)) {
+                
+            } else if (action.equals(Action.READ)) {
+                
+            } else if (action.equals(Action.GET_ATTRIBUTES)) {
+                
             }
             
             socket.close();

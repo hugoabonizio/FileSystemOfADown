@@ -1,6 +1,8 @@
 package thread;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.MonitorService;
@@ -26,7 +28,7 @@ public class AreYouStillAlive implements Runnable
         Message message, answer;
         while (true)
         {
-            for (Connection c : monitorService.getIpServidores())
+            for (Connection c : monitorService.getServerList())
             {
                 message = new Message();
                 message.setSrc(monitorService.getMe());
@@ -40,7 +42,19 @@ public class AreYouStillAlive implements Runnable
                     Thread.sleep(TIMEOUT);
                     if ((answer = (Message) c.getInput().readObject()) == null)
                     {
-                        monitorService.getIpServidores().remove(c);
+                        monitorService.getServerList().remove(c);
+                        Map<Connection, Connection> clientMap = monitorService.getClientMap();
+                        Iterator it = clientMap.keySet().iterator();
+                        while (it.hasNext()) {
+                            Connection key = (Connection) it.next();
+                            if (clientMap.get(key).equals(c)) {
+                                Message answerToClient = new Message();
+                                answerToClient.setSrc(monitorService.getMe());
+                                answerToClient.setData(MonitorService.selectServer(key));
+                                answerToClient.setAction(Action.DISCONNECT);
+                                key.send(answerToClient);
+                            }
+                        }
                     }
                 } catch (InterruptedException | IOException | ClassNotFoundException ex)
                 {

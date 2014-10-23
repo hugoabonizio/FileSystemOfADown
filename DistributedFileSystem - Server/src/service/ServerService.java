@@ -10,8 +10,6 @@ import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.Connection;
@@ -21,10 +19,8 @@ public class ServerService
 {
 
     private FileDAO fileDAO;
-    private Set<Connection> cSet;
-    private Connection connection;
     private String me;
-    private ServerSocket server;
+    private ServerSocket meSS;
 
     public ServerService(String monitorAddress, int mePort)
     {
@@ -33,7 +29,6 @@ public class ServerService
         {
             daoFactory = new DAOFactory();
             fileDAO = daoFactory.getFileDAO();
-            cSet = new HashSet<>();
         } catch (SQLiteException ex)
         {
             Logger.getLogger(ServerService.class.getName()).log(Level.SEVERE, null, ex);
@@ -52,7 +47,7 @@ public class ServerService
             int port = Integer.parseInt(monitorAddress.split(":")[1]);
             
             socket = new Socket(ip, port);
-            connection = new Connection();
+            Connection connection = new Connection();
             connection.setOutput(new ObjectOutputStream(socket.getOutputStream()));
             connection.setInput(new ObjectInputStream(socket.getInputStream()));
             connection.setIp(ip);
@@ -77,7 +72,7 @@ public class ServerService
             me = Inet4Address.getLocalHost().getHostAddress() + ":" + port;
             System.out.println("Server: " + me);
 
-            server = new ServerSocket(port);
+            meSS = new ServerSocket(port);
             new Thread(new WaitConnection(this)).start();
         } catch (IOException ex)
         {
@@ -85,14 +80,14 @@ public class ServerService
         }
     }
 
-    public ServerSocket getServer()
+    public ServerSocket getMeSS()
     {
-        return server;
+        return meSS;
     }
 
-    public void setServer(ServerSocket server)
+    public void setMeSS(ServerSocket meSS)
     {
-        this.server = server;
+        this.meSS = meSS;
     }
 
     public FileDAO getFileDAO()
@@ -113,15 +108,5 @@ public class ServerService
     public void setMe(String me)
     {
         this.me = me;
-    }
-
-    public Set<Connection> getcSet()
-    {
-        return cSet;
-    }
-
-    public void setcSet(Set<Connection> cSet)
-    {
-        this.cSet = cSet;
     }
 }

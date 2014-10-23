@@ -1,16 +1,25 @@
 package frame;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.net.SocketException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import service.ClientService;
 import util.Connection;
 import util.Message;
 import util.Message.Action;
 
-public class Frame extends javax.swing.JFrame {
+public class Frame extends javax.swing.JFrame
+{
 
     private final ClientService clientService;
+    private static final String FOLDER = "true";
 
-    public Frame(ClientService clientService) {
+    public Frame(ClientService clientService)
+    {
         super("Windows Explorer");
         initComponents();
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
@@ -21,11 +30,10 @@ public class Frame extends javax.swing.JFrame {
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         jPanel1 = new javax.swing.JPanel();
-        btnBack = new javax.swing.JButton();
-        btnForward = new javax.swing.JButton();
         navigationBar = new javax.swing.JTextField();
         btnRefresh = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -47,48 +55,55 @@ public class Frame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnBack.setText("Voltar");
-        btnBack.setEnabled(false);
-
-        btnForward.setText("Avançar");
-        btnForward.setEnabled(false);
-
-        navigationBar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        navigationBar.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
                 navigationBarKeyPressed(evt);
             }
         });
 
         btnRefresh.setText("Atualizar");
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnRefresh.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btnRefreshActionPerformed(evt);
             }
         });
 
         tableDirectory.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+            new Object [][]
+            {
 
             },
-            new String [] {
+            new String []
+            {
                 "Nome", "Data", "Tipo", "Tamanho"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
+        )
+        {
+            boolean[] canEdit = new boolean []
+            {
                 true, false, false, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
                 return canEdit [columnIndex];
             }
         });
-        tableDirectory.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        tableDirectory.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
                 tableDirectoryMouseClicked(evt);
             }
         });
-        tableDirectory.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        tableDirectory.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
                 tableDirectoryKeyPressed(evt);
             }
         });
@@ -101,8 +116,10 @@ public class Frame extends javax.swing.JFrame {
 
         btnSave.setText("Salvar");
         btnSave.setEnabled(false);
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSave.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btnSaveActionPerformed(evt);
             }
         });
@@ -120,8 +137,10 @@ public class Frame extends javax.swing.JFrame {
         jLabel6.setText("Proprietário: ");
 
         txtName.setEnabled(false);
-        txtName.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        txtName.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
                 txtNameKeyPressed(evt);
             }
         });
@@ -166,15 +185,19 @@ public class Frame extends javax.swing.JFrame {
         );
 
         btnNewFolder.setText("Nova pasta");
-        btnNewFolder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnNewFolder.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btnNewFolderActionPerformed(evt);
             }
         });
 
         btnNewFile.setText("Novo arquivo");
-        btnNewFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnNewFile.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btnNewFileActionPerformed(evt);
             }
         });
@@ -188,10 +211,6 @@ public class Frame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelDetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnBack)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnForward)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(navigationBar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRefresh))
@@ -216,8 +235,6 @@ public class Frame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnBack)
-                    .addComponent(btnForward)
                     .addComponent(btnRefresh)
                     .addComponent(navigationBar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -258,28 +275,56 @@ public class Frame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void navigationBarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_navigationBarKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            requestReaddir();
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER)
+        {
+            requestReaddir("");
         }
     }//GEN-LAST:event_navigationBarKeyPressed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        requestReaddir();
+        requestReaddir("");
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void tableDirectoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableDirectoryMouseClicked
-        if (tableDirectory.getSelectedRow() != -1 && evt.getClickCount() == 2 && !evt.isConsumed()) {
+        int row = tableDirectory.getSelectedRow();
+        if (row != -1 && evt.getClickCount() == 2 && !evt.isConsumed())
+        {
             evt.consume();
-
+            tableDirectoryReadEvt(row);
         }
     }//GEN-LAST:event_tableDirectoryMouseClicked
 
-    private void tableDirectoryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableDirectoryKeyPressed
-        if (tableDirectory.getSelectedRow() != -1) {
-            if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+    private void tableDirectoryReadEvt(int row)
+    {
+        if (tableDirectory.getValueAt(row, 0).equals(FOLDER))
+        {
+            requestReaddir(tableDirectory.getValueAt(row, 1) + File.separator);
+        } else
+        {
+            entity.File file = new entity.File();
+            file.setFname((String) tableDirectory.getValueAt(row, 1));
+            file.setPath(navigationBar.getText());
+            file.setRead_at((Timestamp) new Date());
 
-            } else if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
-                
+            List<String> serverList = new LinkedList<>();
+            serverList.add((String) tableDirectory.getValueAt(row, 2));
+            serverList.add((String) tableDirectory.getValueAt(row, 3));
+
+            requestRead(file, serverList);
+            requestGetAttributes(file, serverList);
+        }
+    }
+
+    private void tableDirectoryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableDirectoryKeyPressed
+        int row = tableDirectory.getSelectedRow();
+        if (row != -1)
+        {
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER)
+            {
+                tableDirectoryReadEvt(row);
+            } else if (evt.getKeyCode() == KeyEvent.VK_DELETE)
+            {
+
             }
         }
     }//GEN-LAST:event_tableDirectoryKeyPressed
@@ -289,22 +334,21 @@ public class Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtNameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNameKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER)
+        {
 
         }
     }//GEN-LAST:event_txtNameKeyPressed
 
     private void btnNewFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewFolderActionPerformed
-        
+
     }//GEN-LAST:event_btnNewFolderActionPerformed
 
     private void btnNewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewFileActionPerformed
-        
+
     }//GEN-LAST:event_btnNewFileActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBack;
-    private javax.swing.JButton btnForward;
     private javax.swing.JButton btnNewFile;
     private javax.swing.JButton btnNewFolder;
     private javax.swing.JButton btnRefresh;
@@ -326,16 +370,41 @@ public class Frame extends javax.swing.JFrame {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 
-    private void requestReaddir() {
+    private void requestReaddir(String folder)
+    {
         Message m = new Message();
         m.setAction(Action.READDIR);
-        m.setData(navigationBar.getText());
+        m.setData(navigationBar.getText() + folder);
         m.setSrc(clientService.getMe());
 
-        //Connection.send(clientService.getServerAddress(), m);
+        String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+        Connection.send(address, m);
     }
 
-    private void extraInits() {
+    private void extraInits()
+    {
         tableDirectory.setSelectionModel(new ForcedListSelectionModel());
+    }
+
+    private void requestRead(entity.File file, List<String> serverList)
+    {
+        Message m = new Message();
+        m.setAction(Action.READ);
+        m.setData(file);
+        m.setSrc(clientService.getMe());
+
+        Connection.send(serverList.get(0), m);
+        //E quando o servidor está inativo?
+    }
+
+    private void requestGetAttributes(entity.File file, List<String> serverList)
+    {
+        Message m = new Message();
+        m.setAction(Action.GET_ATTRIBUTES);
+        m.setData(file);
+        m.setSrc(clientService.getMe());
+
+        Connection.send(serverList.get(0), m);
+        //E quando o servidor está inativo?
     }
 }

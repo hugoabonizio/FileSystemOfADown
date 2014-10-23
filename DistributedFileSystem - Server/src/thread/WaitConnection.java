@@ -23,7 +23,7 @@ public class WaitConnection implements Runnable {
         Connection connection;
         while (true) {
             try {
-                socket = serverService.getServer().accept();
+                socket = serverService.getMeSS().accept();
 
                 connection = new Connection();
                 connection.setInput(new ObjectInputStream(socket.getInputStream()));

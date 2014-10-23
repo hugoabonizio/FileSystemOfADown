@@ -19,25 +19,25 @@ public class ClientService
 {
 
     private String me;
-    private ServerSocket server;
-    private Connection connection;
+    private ServerSocket meSS;
+    private Connection server;
 
     public ClientService(String monitorAddress, int mePort)
     {
-        connect(monitorAddress);
+        connectToMonitor(monitorAddress);
         listen(mePort);
     }
 
-    public final void connect(String address) throws NumberFormatException
+    private void connectToMonitor(String monitorAddress) throws NumberFormatException
     {
         Socket socket;
         try
         {
-            String ip = address.split(":")[0];
-            int port = Integer.parseInt(address.split(":")[1]);
+            String ip = monitorAddress.split(":")[0];
+            int port = Integer.parseInt(monitorAddress.split(":")[1]);
             
             socket = new Socket(ip, port);
-            connection = new Connection();
+            Connection connection = new Connection();
             connection.setOutput(new ObjectOutputStream(socket.getOutputStream()));
             connection.setInput(new ObjectInputStream(socket.getInputStream()));
             connection.setIp(ip);
@@ -60,12 +60,12 @@ public class ClientService
         try
         {
             me = Inet4Address.getLocalHost().getHostAddress() + ":" + mePort;
-            server = new ServerSocket(mePort);
+            meSS = new ServerSocket(mePort);
             
             Socket socket;
-            while (true || !false)
+            while (true)
             {
-                socket = server.accept();
+                socket = meSS.accept();
                 new Thread(new ClientThread(this, socket)).start();
             }
         } catch (UnknownHostException ex)
@@ -87,23 +87,23 @@ public class ClientService
         this.me = me;
     }
 
-    public ServerSocket getServer()
+    public ServerSocket getMeSS()
+    {
+        return meSS;
+    }
+
+    public void setMeSS(ServerSocket meSS)
+    {
+        this.meSS = meSS;
+    }
+
+    public Connection getServer()
     {
         return server;
     }
 
-    public void setServer(ServerSocket server)
+    public void setServer(Connection server)
     {
         this.server = server;
-    }
-
-    public Connection getConnection()
-    {
-        return connection;
-    }
-
-    public void setConnection(Connection connection)
-    {
-        this.connection = connection;
     }
 }

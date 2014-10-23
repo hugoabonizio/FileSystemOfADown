@@ -3,8 +3,11 @@ package service;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import thread.AreYouStillAlive;
@@ -14,16 +17,16 @@ import util.Connection;
 public class MonitorService
 {
 
-    private Set<Connection> ipServidores;
-    private Set<Connection> ipClientes;
+    private static List<Connection> serverList;
+    private static Map<Connection, Connection> clientMap;
     private String me;
-    private ServerSocket server;
+    private ServerSocket meSS;
 
     public MonitorService(int port)
     {
-        ipServidores = new HashSet<>();
-        ipClientes = new HashSet<>();
-        
+        serverList = new LinkedList<>();
+        clientMap = new HashMap<>();
+
         listen(port);
         ping();
     }
@@ -35,46 +38,27 @@ public class MonitorService
             me = Inet4Address.getLocalHost().getHostAddress() + ":" + port;
             System.out.println("Monitor de servidores: " + me);
 
-            server = new ServerSocket(port);
+            meSS = new ServerSocket(port);
             new Thread(new WaitConnection(this)).start();
         } catch (IOException ex)
         {
             Logger.getLogger(MonitorService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void ping() {
+
+    private void ping()
+    {
         new Thread(new AreYouStillAlive(this)).start();
     }
 
-    public Set<Connection> getIpServidores()
+    public ServerSocket getMeSS()
     {
-        return ipServidores;
+        return meSS;
     }
 
-    public void setIpServidores(Set<Connection> ipServidores)
+    public void setMeSS(ServerSocket meSS)
     {
-        this.ipServidores = ipServidores;
-    }
-
-    public Set<Connection> getIpClientes()
-    {
-        return ipClientes;
-    }
-
-    public void setIpClientes(Set<Connection> ipClientes)
-    {
-        this.ipClientes = ipClientes;
-    }
-
-    public ServerSocket getServer()
-    {
-        return server;
-    }
-
-    public void setServer(ServerSocket server)
-    {
-        this.server = server;
+        this.meSS = meSS;
     }
 
     public String getMe()
@@ -85,5 +69,34 @@ public class MonitorService
     public void setMe(String me)
     {
         this.me = me;
+    }
+
+    public Map<Connection, Connection> getClientMap()
+    {
+        return clientMap;
+    }
+
+    public void setClientMap(Map<Connection, Connection> clientMap)
+    {
+        MonitorService.clientMap = clientMap;
+    }
+
+    public List<Connection> getServerList()
+    {
+        return serverList;
+    }
+
+    public void setServerList(List<Connection> serverList)
+    {
+        MonitorService.serverList = serverList;
+    }
+
+    public static Connection selectServer(Connection client)
+    {
+        Random random = new Random();
+        int position = random.nextInt(serverList.size());
+        Connection server = serverList.get(position);
+        clientMap.put(client, server);
+        return server;
     }
 }
