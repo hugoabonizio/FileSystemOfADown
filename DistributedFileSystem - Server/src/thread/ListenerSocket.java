@@ -86,18 +86,18 @@ public class ListenerSocket implements Runnable {
                         sendErrorAnswer(connection, ex.getMessage());
                     }
                 }/* else if (action.equals(Action.SET_ATTRIBUTES)) {
-                    try {
-                        File file = (File) message.getData();
-                        serverService.getFileDAO().setAttributes(file);
-                        answer = new Message();
-                        answer.setAction(Action.SET_ATTRIBUTES);
-                        answer.setData("Atributos do arquivo alterados com sucesso!");
-                        answer.setSrc(serverService.getMe());
-                        connection.send(answer);
-                    } catch (SQLiteException ex) {
-                        sendErrorAnswer(connection, ex.getMessage());
-                    }
-                }*/ else if (action.equals(Action.RENAME)) {
+                 try {
+                 File file = (File) message.getData();
+                 serverService.getFileDAO().setAttributes(file);
+                 answer = new Message();
+                 answer.setAction(Action.SET_ATTRIBUTES);
+                 answer.setData("Atributos do arquivo alterados com sucesso!");
+                 answer.setSrc(serverService.getMe());
+                 connection.send(answer);
+                 } catch (SQLiteException ex) {
+                 sendErrorAnswer(connection, ex.getMessage());
+                 }
+                 }*/ else if (action.equals(Action.RENAME)) {
                     try {
                         File file = (File) message.getData();
                         serverService.getFileDAO().rename(file);
@@ -122,8 +122,8 @@ public class ListenerSocket implements Runnable {
                     }
                 } else if (action.equals(Action.RMDIR)) {
                     try {
-                        Integer id = (Integer) message.getData();
-                        serverService.getFileDAO().rmdir(id);
+                        File file = (File) message.getData();
+                        serverService.getFileDAO().rmdir(file);
                         answer = new Message();
                         answer.setAction(Action.RMDIR);
                         answer.setData("Diretório deletado com sucesso!");

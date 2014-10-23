@@ -14,16 +14,14 @@ import thread.AreYouStillAlive;
 import thread.WaitConnection;
 import util.Connection;
 
-public class MonitorService
-{
+public class MonitorService {
 
     private static List<Connection> serverList;
     private static Map<Connection, Connection> clientMap;
     private String me;
     private ServerSocket meSS;
 
-    public MonitorService(int port)
-    {
+    public MonitorService(int port) {
         serverList = new LinkedList<>();
         clientMap = new HashMap<>();
 
@@ -31,68 +29,55 @@ public class MonitorService
         ping();
     }
 
-    private void listen(int port)
-    {
-        try
-        {
+    private void listen(int port) {
+        try {
             me = Inet4Address.getLocalHost().getHostAddress() + ":" + port;
             System.out.println("Monitor de servidores: " + me);
 
             meSS = new ServerSocket(port);
             new Thread(new WaitConnection(this)).start();
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(MonitorService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void ping()
-    {
+    private void ping() {
         new Thread(new AreYouStillAlive(this)).start();
     }
 
-    public ServerSocket getMeSS()
-    {
+    public ServerSocket getMeSS() {
         return meSS;
     }
 
-    public void setMeSS(ServerSocket meSS)
-    {
+    public void setMeSS(ServerSocket meSS) {
         this.meSS = meSS;
     }
 
-    public String getMe()
-    {
+    public String getMe() {
         return me;
     }
 
-    public void setMe(String me)
-    {
+    public void setMe(String me) {
         this.me = me;
     }
 
-    public Map<Connection, Connection> getClientMap()
-    {
+    public Map<Connection, Connection> getClientMap() {
         return clientMap;
     }
 
-    public void setClientMap(Map<Connection, Connection> clientMap)
-    {
+    public void setClientMap(Map<Connection, Connection> clientMap) {
         MonitorService.clientMap = clientMap;
     }
 
-    public List<Connection> getServerList()
-    {
+    public List<Connection> getServerList() {
         return serverList;
     }
 
-    public void setServerList(List<Connection> serverList)
-    {
+    public void setServerList(List<Connection> serverList) {
         MonitorService.serverList = serverList;
     }
 
-    public static Connection selectServer(Connection client)
-    {
+    public static Connection selectServer(Connection client) {
         Random random = new Random();
         int position = random.nextInt(serverList.size());
         Connection server = serverList.get(position);

@@ -14,16 +14,16 @@ import javax.swing.JOptionPane;
 public class Server {
 
     public static void main(String[] args) throws SQLiteException {
-        
+
         Logger.getLogger("com.almworks.sqlite4java").setLevel(Level.OFF);
         SQLiteConnection session_files = new SQLiteConnection(new File("database/temporary.db"));
         SQLiteConnection local_files = new SQLiteConnection(new File("database/local_files.db"));
         session_files.open(true);
         local_files.open(true);
-        
+
         // Limpa arquivos de sessão
         session_files.exec("DELETE FROM files");
-        
+
         // Popula o banco com os arquivos locais, inicialmente
         SQLiteStatement select = local_files.prepare("SELECT * FROM files");
         SQLiteStatement insert;
@@ -34,10 +34,8 @@ public class Server {
             insert.bind(3, select.columnString(3));
             insert.step();
         }
-        
-        
+
         // session_files.dispose();
-        
         String monitorAddress;
         try {
             monitorAddress = JOptionPane.showInputDialog(null, "Insira IP:Porta do monitor de servidores", Inet4Address.getLocalHost().getHostAddress() + ":");

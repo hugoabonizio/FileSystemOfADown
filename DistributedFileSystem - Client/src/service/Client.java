@@ -23,14 +23,13 @@ public class Client {
         }
 
         try {
-            String monitorAddress = JOptionPane.showInputDialog(null, "Insira IP:Porta do monitor de servidores", Inet4Address.getLocalHost().getHostAddress() + ":");
-            Random random = new Random();
-            final ClientService clientService = new ClientService(monitorAddress, random.nextInt(1000) + 11000);
+            final String monitorAddress = JOptionPane.showInputDialog(null, "Insira IP:Porta do monitor de servidores", Inet4Address.getLocalHost().getHostAddress() + ":");
+            final Random random = new Random();
 
             java.awt.EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    new Frame(clientService).setVisible(true);
+                    new Frame(monitorAddress, random.nextInt(1000) + 11000).setVisible(true);
                 }
             });
         } catch (UnknownHostException ex) {

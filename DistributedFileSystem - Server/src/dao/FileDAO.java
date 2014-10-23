@@ -15,7 +15,7 @@ public class FileDAO {
     private static final String writeQuery = "UPDATE file SET body = ?, fsize = ?, updated_at = ? WHERE id = ?;";
     private static final String createQuery = "INSERT INTO file(fname, path, is_dir, body, fsize, ftype, created_at, read_at, updated_at, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id;";
     private static final String deleteQuery = "DELETE FROM file WHERE fname = ? AND path = ?;";
-    private static final String getAttributesQuery = "SELECT fname, path, is_dir, fsize, ftype, created_at, read_at, updated_at, owner FROM file WHERE fname = ? AND path = ?;";
+    private static final String getAttributesQuery = "SELECT id, is_dir, fsize, ftype, created_at, read_at, updated_at, owner FROM file WHERE fname = ? AND path = ?;";
     //private static final String setAttributesQuery = "UPDATE file SET owner = ?, updated_at = ? WHERE id = ?;";
     private static final String renameQuery = "UPDATE file SET fname = ?, updated_at = ? WHERE id = ?;";
     private static final String mkdirQuery = "INSERT INTO file(fname, path, is_dir, fsize, created_at, read_at, updated_at, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
@@ -28,7 +28,7 @@ public class FileDAO {
 
     public String read(File file) throws SQLiteException {
         String body = null;
-        
+
         SQLiteStatement statement = connection.prepare(readQuery);
         statement.bind(1, file.getFname());
         statement.bind(2, file.getPath());
@@ -36,7 +36,7 @@ public class FileDAO {
             body = (String) statement.columnValue(4);
         }
         updateRead_at(file);
-        
+
         return body;
     }
 
@@ -82,8 +82,7 @@ public class FileDAO {
         statement.bind(2, arg.getPath());
         if (statement.step()) {
             file = new File();
-            file.setFname((String) statement.columnValue(1));
-            file.setPath((String) statement.columnValue(2));
+            file.setId((Integer) statement.columnValue(0));
             file.setIs_dir((Boolean) statement.columnValue(3));
             file.setFsize((Integer) statement.columnValue(5));
             file.setFtype((String) statement.columnValue(6));
@@ -98,13 +97,12 @@ public class FileDAO {
     }
 
     /*public void setAttributes(File file) throws SQLiteException {
-        SQLiteStatement statement = connection.prepare(setAttributesQuery);
-        statement.bind(1, file.getOwner());
-        statement.bind(2, file.getUpdated_at().toString());
-        statement.bind(3, file.getId());
-        statement.step();
-    }*/
-
+     SQLiteStatement statement = connection.prepare(setAttributesQuery);
+     statement.bind(1, file.getOwner());
+     statement.bind(2, file.getUpdated_at().toString());
+     statement.bind(3, file.getId());
+     statement.step();
+     }*/
     public void rename(File file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(renameQuery);
         statement.bind(1, file.getFname());
@@ -129,9 +127,10 @@ public class FileDAO {
         return null;
     }
 
-    public void rmdir(Integer id) throws SQLiteException {
+    public void rmdir(File file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(deleteQuery);
-        statement.bind(1, id);
+        statement.bind(1, file.getFname());
+        statement.bind(2, file.getPath());
         statement.step();
     }
 
@@ -158,7 +157,7 @@ public class FileDAO {
 
         return fileList;
     }
-    
+
     private void updateRead_at(File file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(updateRead_atQuery);
         statement.bind(1, file.getRead_at().toString());

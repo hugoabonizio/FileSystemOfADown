@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import service.MonitorService;
+
 public class WaitConnection implements Runnable {
 
     private Socket socket;

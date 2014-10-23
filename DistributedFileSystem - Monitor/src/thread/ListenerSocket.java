@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.MonitorService;
@@ -41,9 +40,9 @@ public class ListenerSocket implements Runnable {
                     c.setPort(port);
                     c.setSocket(socket);
 
-                    if (message.getData().equals("I'm server"))
+                    if (message.getData().equals("I'm server")) {
                         monitorService.getServerList().add(c);
-                    else if (message.getData().equals("I'm client")) {
+                    } else if (message.getData().equals("I'm client")) {
                         answer = message;
                         answer.setSrc(monitorService.getMe());
                         answer.setData(MonitorService.selectServer(c));

@@ -1,7 +1,5 @@
 package util;
 
-
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -56,7 +54,7 @@ public class Connection {
     public void setIp(String ip) {
         this.ip = ip;
     }
-    
+
     public static void send(String dest, Object obj) {
         String ip = dest.split(":")[0];
         int port = new Integer(dest.split(":")[1]);
@@ -67,9 +65,9 @@ public class Connection {
         } catch (IOException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     public void send(Message obj) {
         try {
             output.writeObject(obj);

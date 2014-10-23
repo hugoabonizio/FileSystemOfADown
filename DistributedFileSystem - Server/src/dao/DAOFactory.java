@@ -18,7 +18,7 @@ public class DAOFactory implements AutoCloseable {
     public void close() throws SQLException {
         connection.dispose();
     }
-    
+
     public FileDAO getFileDAO() {
         return new FileDAO(connection);
     }
