@@ -11,7 +11,7 @@ public class DAOFactory implements AutoCloseable {
 
     @Override
     public void close() throws SQLException {
-        connection.dispose();
+        //connection.dispose();
     }
 
     public FileDAO getFileDAO() throws SQLiteException {

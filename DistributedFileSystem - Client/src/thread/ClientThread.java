@@ -1,10 +1,12 @@
 package thread;
 
 import entity.File;
+import entity.Temporary;
 import frame.Frame;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +33,7 @@ public class ClientThread implements Runnable {
         try {
             message = (Message) new ObjectInputStream(socket.getInputStream()).readObject();
             Action action = message.getAction();
+            System.out.println("Action: " + action);
 
             if (action.equals(Action.CONNECT_CLIENT)) {
                 clientService.setOther_servers((Set<Connection>) message.getData());
@@ -50,11 +53,15 @@ public class ClientThread implements Runnable {
                 frame.getLabelDataModificacao().setText("Data de modificação: " + file.getUpdated_at());
                 frame.getLabelProprietario().setText("Proprietário: " + file.getOwner());
             } else if (action.equals(Action.READDIR)) {
-
+                for (Temporary t: (List<Temporary>) message.getData()) {
+                    System.out.println(t.getFname());
+                }
             } else if (action.equals(Action.MKDIR)) {
                 
             } else if (action.equals(Action.CREATE)) {
                 
+            } else if (action.equals(Action.PING)) {
+                // TODO
             }
 
             socket.close();

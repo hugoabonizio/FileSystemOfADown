@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * @author hugo
  */
 public class Main {
-    public static void main(String[] args) throws SQLiteException {
+    public static void _main(String[] args) throws SQLiteException {
         Logger.getLogger("com.almworks.sqlite4java").setLevel(Level.OFF);
         try (DAOFactory dao = new DAOFactory();) {
             TemporaryDAO tempdao = dao.getTemporaryDAO();

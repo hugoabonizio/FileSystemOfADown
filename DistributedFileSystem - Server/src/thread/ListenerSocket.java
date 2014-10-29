@@ -1,12 +1,17 @@
 package thread;
 
+import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
+import dao.FileDAO;
+import dao.TemporaryDAO;
 import entity.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import service.ServerService;
 import util.Connection;
 import util.Message;
@@ -16,8 +21,11 @@ public class ListenerSocket implements Runnable {
 
     private final ServerService serverService;
     private final Connection connection;
+    private SQLiteConnection tempConnection, localConnection;
+    private TemporaryDAO TempDAO;
+    private FileDAO LocalDAO;
 
-    public ListenerSocket(ServerService serverService, Connection connection) {
+    public ListenerSocket(ServerService serverService, Connection connection) throws SQLiteException {
         this.serverService = serverService;
         this.connection = connection;
     }
@@ -25,9 +33,26 @@ public class ListenerSocket implements Runnable {
     @Override
     public void run() {
         Message message, answer;
+        
+        try {
+            tempConnection = new SQLiteConnection(new java.io.File("database/temporary.db"));
+            tempConnection.open(true);
+            TempDAO = new TemporaryDAO(tempConnection);
+        
+            localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
+            localConnection.open(true);
+            LocalDAO = new FileDAO(localConnection);
+        } catch (SQLiteException ex) {
+            Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         try {
             while ((message = (Message) connection.getInput().readObject()) != null) {
                 Action action = message.getAction();
+                if (action != Action.PING) {
+                    System.out.println("Action: " + action);
+                }
 
                 if (action.equals(Action.CONNECT_SERVER)) {
                     String ip = message.getSrc().split(":")[0];
@@ -43,14 +68,14 @@ public class ListenerSocket implements Runnable {
 
                     serverService.getServerSet().add(c);
                     for (File f : (List<File>) message.getData()) {
-                        serverService.getTempDAO().create(f);
+                        TempDAO.create(f);
                     }
                 } else if (action.equals(Action.CONNECT_CLIENT)) {
                     answer = new Message();
                     answer.setAction(Action.CONNECT_CLIENT);
                     answer.setData(serverService.getServerSet());
                     answer.setSrc(serverService.getMe());
-                    connection.send(answer);
+                    Connection.send(message.getSrc(), answer);
                 } else if (action.equals(Action.DISCONNECT)) {
                     serverService.getServerSet().remove((Connection) message.getData());
                     //replicar os dados contidos nesse servidor que se desconectou para outro servidor
@@ -58,12 +83,12 @@ public class ListenerSocket implements Runnable {
                     File file = (File) message.getData();
                     answer = new Message();
                     answer.setAction(Action.READ);
-                    answer.setData(serverService.getFileDAO().read(file));
+                    answer.setData(LocalDAO.read(file));
                     answer.setSrc(serverService.getMe());
                     connection.send(answer);
                 } else if (action.equals(Action.WRITE)) {
                     File file = (File) message.getData();
-                    serverService.getFileDAO().write(file);
+                    LocalDAO.write(file);
                     answer = new Message();
                     answer.setAction(Action.WRITE);
                     answer.setSrc(serverService.getMe());
@@ -72,12 +97,12 @@ public class ListenerSocket implements Runnable {
                     File file = (File) message.getData();
                     answer = new Message();
                     answer.setAction(Action.CREATE);
-                    answer.setData(serverService.getFileDAO().create(file));
+                    answer.setData(LocalDAO.create(file));
                     answer.setSrc(serverService.getMe());
                     connection.send(answer);
                 } else if (action.equals(Action.DELETE)) {
                     File file = (File) message.getData();
-                    serverService.getFileDAO().delete(file);
+                    LocalDAO.delete(file);
                     answer = new Message();
                     answer.setAction(Action.DELETE);
                     answer.setData("Arquivo deletado com sucesso!");
@@ -87,12 +112,12 @@ public class ListenerSocket implements Runnable {
                     File file = (File) message.getData();
                     answer = new Message();
                     answer.setAction(Action.GET_ATTRIBUTES);
-                    answer.setData(serverService.getFileDAO().getAttributes(file));
+                    answer.setData(LocalDAO.getAttributes(file));
                     answer.setSrc(serverService.getMe());
                     connection.send(answer);
                 }/* else if (action.equals(Action.SET_ATTRIBUTES)) {
                  File file = (File) message.getData();
-                 serverService.getFileDAO().setAttributes(file);
+                 LocalDAO.setAttributes(file);
                  answer = new Message();
                  answer.setAction(Action.SET_ATTRIBUTES);
                  answer.setData("Atributos do arquivo alterados com sucesso!");
@@ -100,7 +125,7 @@ public class ListenerSocket implements Runnable {
                  connection.send(answer);
                  }*/ else if (action.equals(Action.RENAME)) {
                     File file = (File) message.getData();
-                    serverService.getFileDAO().rename(file);
+                    LocalDAO.rename(file);
                     answer = new Message();
                     answer.setAction(Action.RENAME);
                     answer.setData("Arquivo renomeado com sucesso!");
@@ -110,12 +135,12 @@ public class ListenerSocket implements Runnable {
                     File file = (File) message.getData();
                     answer = new Message();
                     answer.setAction(Action.MKDIR);
-                    answer.setData(serverService.getFileDAO().mkdir(file));
+                    answer.setData(LocalDAO.mkdir(file));
                     answer.setSrc(serverService.getMe());
                     connection.send(answer);
                 } else if (action.equals(Action.RMDIR)) {
                     File file = (File) message.getData();
-                    serverService.getFileDAO().rmdir(file);
+                    LocalDAO.rmdir(file);
                     answer = new Message();
                     answer.setAction(Action.RMDIR);
                     answer.setData("Diretório deletado com sucesso!");
@@ -123,21 +148,27 @@ public class ListenerSocket implements Runnable {
                     connection.send(answer);
                 } else if (action.equals(Action.READDIR)) {
                     String path = (String) message.getData();
+                    System.out.println("source: " + message.getSrc());
                     answer = new Message();
                     answer.setAction(Action.READDIR);
-                    answer.setData(serverService.getTempDAO().readdir(path));
+                    answer.setData(TempDAO.readdir(path));
+                    System.out.println("depois do DAO");
                     answer.setSrc(serverService.getMe());
-                    connection.send(answer);
+                    
+                    Connection.send(message.getSrc(), answer);
                 } else if (action.equals(Action.PING)) {
-                    answer = message;
+                    answer = new Message();
                     answer.setSrc(serverService.getMe());
                     answer.setData("ESTOU VIVO POR ENQUANTO...");
-                    connection.send(answer);
+                    answer.setAction(Action.PING);
+                    //System.out.println("PINGA " + message.getSrc());
+                    Connection.send(message.getSrc(), answer);
                 }
             }
         } catch (IOException ex) {
-            //Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException | SQLiteException ex) {
+            ex.printStackTrace();
             sendErrorAnswer(connection, ex.getMessage());
         }
     }

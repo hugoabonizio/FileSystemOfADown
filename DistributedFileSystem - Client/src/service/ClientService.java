@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import thread.AreYouStillAlive;
 import thread.ClientThread;
+import thread.WaitConnection;
 import util.Connection;
 import util.Message;
 import util.Message.Action;
@@ -29,17 +30,17 @@ public class ClientService {
     public ClientService(Frame frame, String serverAddress, int mePort) {
         this.frame = frame;
         this.other_servers = new HashSet<>();
-
-        connectToServer(serverAddress);
+        
         listen(mePort);
+        connectToServer(serverAddress);
         ping();
     }
 
-    private void connectToServer(String monitorAddress) throws NumberFormatException {
+    private void connectToServer(String serverAddress) throws NumberFormatException {
         Socket socket;
         try {
-            String ip = monitorAddress.split(":")[0];
-            int port = Integer.parseInt(monitorAddress.split(":")[1]);
+            String ip = serverAddress.split(":")[0];
+            int port = Integer.parseInt(serverAddress.split(":")[1]);
 
             socket = new Socket(ip, port);
             server = new Connection();
@@ -61,13 +62,9 @@ public class ClientService {
     private void listen(int mePort) {
         try {
             me = Inet4Address.getLocalHost().getHostAddress() + ":" + mePort;
+            System.out.println("Escutando em: " + me);
             meSS = new ServerSocket(mePort);
-
-            Socket socket;
-            while (true) {
-                socket = meSS.accept();
-                new Thread(new ClientThread(this, socket)).start();
-            }
+            new Thread(new WaitConnection(this, meSS)).start();
         } catch (UnknownHostException ex) {
             Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

@@ -1,5 +1,6 @@
 package thread;
 
+import com.almworks.sqlite4java.SQLiteException;
 import service.ServerService;
 import util.Connection;
 import java.io.IOException;
@@ -33,6 +34,8 @@ public class WaitConnection implements Runnable {
 
                 new Thread(new ListenerSocket(serverService, connection)).start();
             } catch (IOException ex) {
+                Logger.getLogger(WaitConnection.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLiteException ex) {
                 Logger.getLogger(WaitConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
