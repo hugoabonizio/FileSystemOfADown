@@ -22,13 +22,12 @@ public class Frame extends javax.swing.JFrame {
     private Integer openedFileId;
     private static final String FOLDER = "true";
 
-    public Frame(String monitorAddress, int mePort) {
+    public Frame(String serverAddress, int mePort) {
         super("Windows Explorer");
         initComponents();
-        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         extraInits();
 
-        clientService = new ClientService(this, monitorAddress, mePort);
+        clientService = new ClientService(this, serverAddress, mePort);
     }
 
     @SuppressWarnings("unchecked")
@@ -424,6 +423,7 @@ public class Frame extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void extraInits() {
+        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         getTableDirectory().setSelectionModel(new ForcedListSelectionModel());
     }
 
@@ -475,7 +475,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        trySendRequest(m);
+        Connection.trySendRequest(serverList, m, false);
     }
 
     private void requestGetAttributes(entity.File file) {
@@ -484,7 +484,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        trySendRequest(m);
+        Connection.trySendRequest(serverList, m, false);
     }
 
     private void requestRmdir(entity.File file) {
@@ -517,17 +517,6 @@ public class Frame extends javax.swing.JFrame {
             }
         }
         //remover row da JTable
-    }
-
-    private void trySendRequest(Message m) {
-        for (String s : serverList) {
-            try {
-                Connection.send(s, m);
-                break;
-            } catch (IOException ex) {
-                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
 
     public List<String> getServerList() {

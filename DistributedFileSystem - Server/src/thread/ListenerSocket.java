@@ -30,7 +30,6 @@ public class ListenerSocket implements Runnable {
                 Action action = message.getAction();
 
                 if (action.equals(Action.CONNECT_SERVER)) {
-                    //Quando o servidor manda a tabela temporaria do momento...
                     String ip = message.getSrc().split(":")[0];
                     int port = Integer.parseInt(message.getSrc().split(":")[1]);
 
@@ -46,6 +45,15 @@ public class ListenerSocket implements Runnable {
                     for (File f : (List<File>) message.getData()) {
                         serverService.getTempDAO().create(f);
                     }
+                } else if (action.equals(Action.CONNECT_CLIENT)) {
+                    answer = new Message();
+                    answer.setAction(Action.CONNECT_CLIENT);
+                    answer.setData(serverService.getServerSet());
+                    answer.setSrc(serverService.getMe());
+                    connection.send(answer);
+                } else if (action.equals(Action.DISCONNECT)) {
+                    serverService.getServerSet().remove((Connection) message.getData());
+                    //replicar os dados contidos nesse servidor que se desconectou para outro servidor
                 } else if (action.equals(Action.READ)) {
                     File file = (File) message.getData();
                     answer = new Message();

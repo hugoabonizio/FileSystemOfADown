@@ -5,6 +5,7 @@ import frame.Frame;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.ClientService;
@@ -31,10 +32,8 @@ public class ClientThread implements Runnable {
             message = (Message) new ObjectInputStream(socket.getInputStream()).readObject();
             Action action = message.getAction();
 
-            if (action.equals(Action.CONNECT) || action.equals(Action.DISCONNECT)) {
-                clientService.setServer((Connection) message.getData());
-            } else if (action.equals(Action.READDIR)) {
-
+            if (action.equals(Action.CONNECT_CLIENT)) {
+                clientService.setOther_servers((Set<Connection>) message.getData());
             } else if (action.equals(Action.READ)) {
                 frame.getTxtFile().setEnabled(true);
                 frame.getBtnSave().setEnabled(true);
@@ -50,16 +49,12 @@ public class ClientThread implements Runnable {
                 frame.getLabelDataAcesso().setText("Data de acesso: " + file.getRead_at());
                 frame.getLabelDataModificacao().setText("Data de modificação: " + file.getUpdated_at());
                 frame.getLabelProprietario().setText("Proprietário: " + file.getOwner());
+            } else if (action.equals(Action.READDIR)) {
+
             } else if (action.equals(Action.MKDIR)) {
-                //precisa?
+                
             } else if (action.equals(Action.CREATE)) {
-                //precisa?
-            } else if (action.equals(Action.RMDIR)) {
-                //precisa?
-            } else if (action.equals(Action.DELETE)) {
-                //precisa?
-            } else if (action.equals(Action.RENAME)) {
-                //precisa?
+                
             }
 
             socket.close();

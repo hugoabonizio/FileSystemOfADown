@@ -38,7 +38,7 @@ public class Server {
         List<String> servers = new ArrayList<>();
         String input;
         try {
-            while (!(input = JOptionPane.showInputDialog(null, "Insira IP:Porta do monitor de servidores", Inet4Address.getLocalHost().getHostAddress() + ":")).equals("ok")) {
+            while (!(input = JOptionPane.showInputDialog(null, "Insira IP:Porta do servidor", Inet4Address.getLocalHost().getHostAddress() + ":")).equals("ok")) {
                 servers.add(input);
             }
             Random random = new Random();

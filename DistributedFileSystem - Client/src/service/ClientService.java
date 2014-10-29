@@ -8,8 +8,11 @@ import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import thread.AreYouStillAlive;
 import thread.ClientThread;
 import util.Connection;
 import util.Message;
@@ -21,32 +24,35 @@ public class ClientService {
     private String me;
     private ServerSocket meSS;
     private Connection server;
+    private Set<Connection> other_servers;
 
-    public ClientService(Frame frame, String monitorAddress, int mePort) {
+    public ClientService(Frame frame, String serverAddress, int mePort) {
         this.frame = frame;
-        connectToMonitor(monitorAddress);
+        this.other_servers = new HashSet<>();
+
+        connectToServer(serverAddress);
         listen(mePort);
+        ping();
     }
 
-    private void connectToMonitor(String monitorAddress) throws NumberFormatException {
+    private void connectToServer(String monitorAddress) throws NumberFormatException {
         Socket socket;
         try {
             String ip = monitorAddress.split(":")[0];
             int port = Integer.parseInt(monitorAddress.split(":")[1]);
 
             socket = new Socket(ip, port);
-            Connection connection = new Connection();
-            connection.setOutput(new ObjectOutputStream(socket.getOutputStream()));
-            connection.setInput(new ObjectInputStream(socket.getInputStream()));
-            connection.setIp(ip);
-            connection.setPort(port);
-            connection.setSocket(socket);
+            server = new Connection();
+            server.setOutput(new ObjectOutputStream(socket.getOutputStream()));
+            server.setInput(new ObjectInputStream(socket.getInputStream()));
+            server.setIp(ip);
+            server.setPort(port);
+            server.setSocket(socket);
 
             Message message = new Message();
             message.setSrc(me);
-            message.setData("I'm client");
-            message.setAction(Action.CONNECT);
-            connection.send(message);
+            message.setAction(Action.CONNECT_CLIENT);
+            server.send(message);
         } catch (IOException ex) {
             Logger.getLogger(ClientService.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -67,6 +73,10 @@ public class ClientService {
         } catch (IOException ex) {
             Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void ping() {
+        new Thread(new AreYouStillAlive(this)).start();
     }
 
     public String getMe() {
@@ -99,5 +109,13 @@ public class ClientService {
 
     public void setFrame(Frame frame) {
         this.frame = frame;
+    }
+
+    public Set<Connection> getOther_servers() {
+        return other_servers;
+    }
+
+    public void setOther_servers(Set<Connection> other_servers) {
+        this.other_servers = other_servers;
     }
 }
