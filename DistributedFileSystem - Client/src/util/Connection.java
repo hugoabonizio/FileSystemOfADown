@@ -97,12 +97,8 @@ public class Connection {
 
     }
 
-    public void send(Message obj) {
-        try {
-            output.writeObject(obj);
-        } catch (IOException ex) {
-            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void send(Message obj) throws IOException {
+        output.writeObject(obj);
     }
 
     public static void trySendRequest(Object objects, Message m, boolean isConnection) {

@@ -61,7 +61,7 @@ public class ClientThread implements Runnable {
             } else if (action.equals(Action.CREATE)) {
                 
             } else if (action.equals(Action.PING)) {
-                // TODO
+                clientService.lastPING = System.currentTimeMillis();
             }
 
             socket.close();

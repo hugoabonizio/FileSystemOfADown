@@ -21,16 +21,24 @@ public class AreYouStillAlive implements Runnable {
     @Override
     public void run() {
         while (true) {
-            testConnection(clientService.getServer());
+            try {
+                testConnection(clientService.getServer());
+            } catch (IOException ex) {
+                System.out.println("CAIU!");
+            }
         }
     }
 
-    private void testConnection(Connection c) {
+    private void testConnection(Connection c) throws IOException {
         Message message = new Message();
         message.setSrc(clientService.getMe());
         message.setData("VOCE AINDA ESTA VIVO?");
         message.setAction(Action.PING);
         c.send(message);
+        
+        /*if ((System.currentTimeMillis() - clientService.lastPING) > 5000) {
+            System.out.println("CAIU");
+        }*/
         
         try {
             //Message message_aux = null;

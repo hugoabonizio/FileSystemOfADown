@@ -26,6 +26,7 @@ public class ClientService {
     private ServerSocket meSS;
     private Connection server;
     private Set<Connection> other_servers;
+    public long lastPING = System.currentTimeMillis();
 
     public ClientService(Frame frame, String serverAddress, int mePort) {
         this.frame = frame;
