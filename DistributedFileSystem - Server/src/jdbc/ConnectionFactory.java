@@ -18,7 +18,7 @@ public class ConnectionFactory {
         return instance;
     }
 
-    public SQLiteConnection getConnection() {
-        return new SQLiteConnection(new File("database/so2014.db"));
+    public SQLiteConnection getConnection(String database) {
+        return new SQLiteConnection(new File("database/" + database + ".db"));
     }
 }

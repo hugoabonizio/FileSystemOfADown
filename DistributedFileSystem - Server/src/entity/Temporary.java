@@ -38,4 +38,7 @@ public class Temporary {
     public void setIs_dir(String is_dir) {
         this.is_dir = is_dir;
     }
+    public void setIs_dir(Boolean is_dir) {
+        this.is_dir = is_dir.toString();
+    }
 }

@@ -125,7 +125,7 @@ public class ListenerSocket implements Runnable {
                     String path = (String) message.getData();
                     answer = new Message();
                     answer.setAction(Action.READDIR);
-                    answer.setData(serverService.getFileDAO().readdir(path));
+                    answer.setData(serverService.getTempDAO().readdir(path));
                     answer.setSrc(serverService.getMe());
                     connection.send(answer);
                 } else if (action.equals(Action.PING)) {

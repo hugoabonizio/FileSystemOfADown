@@ -9,21 +9,20 @@ public class DAOFactory implements AutoCloseable {
 
     private SQLiteConnection connection = null;
 
-    public DAOFactory() throws SQLiteException {
-        connection = ConnectionFactory.getInstance().getConnection();
-        connection.open(true);
-    }
-
     @Override
     public void close() throws SQLException {
         connection.dispose();
     }
 
-    public FileDAO getFileDAO() {
+    public FileDAO getFileDAO() throws SQLiteException {
+        connection = ConnectionFactory.getInstance().getConnection("local");
+        connection.open(true);
         return new FileDAO(connection);
     }
     
-    public TemporaryDAO getTemporaryDAO() {
+    public TemporaryDAO getTemporaryDAO() throws SQLiteException {
+        connection = ConnectionFactory.getInstance().getConnection("temporary");
+        connection.open(true);
         return new TemporaryDAO(connection);
     }
 }
