@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +54,32 @@ public class Connection {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + Objects.hashCode(this.output);
+        hash = 59 * hash + Objects.hashCode(this.input);
+        hash = 59 * hash + this.port;
+        hash = 59 * hash + Objects.hashCode(this.socket);
+        hash = 59 * hash + Objects.hashCode(this.ip);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Connection other = (Connection) obj;
+        if (this.port != other.port) {
+            return false;
+        }
+        return Objects.equals(this.ip, other.ip);
     }
 
     public static void send(String dest, Object obj) {

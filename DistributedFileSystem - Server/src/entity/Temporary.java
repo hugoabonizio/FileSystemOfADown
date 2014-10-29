@@ -1,6 +1,7 @@
 package entity;
 
 public class Temporary {
+
     private int id;
     private String fname;
     private String path;

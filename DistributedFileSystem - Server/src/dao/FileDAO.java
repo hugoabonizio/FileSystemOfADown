@@ -21,6 +21,7 @@ public class FileDAO {
     private static final String mkdirQuery = "INSERT INTO file(fname, path, is_dir, fsize, created_at, read_at, updated_at, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
     private static final String readdirQuery = "SELECT * FROM file WHERE path = ?;";
     private static final String updateRead_atQuery = "UPDATE file SET read_at = ? WHERE fname = ? AND path = ?;";
+    private static final String allQuery = "SELECT * FROM file;";
 
     public FileDAO(SQLiteConnection connection) {
         this.connection = connection;
@@ -164,5 +165,29 @@ public class FileDAO {
         statement.bind(2, file.getFname());
         statement.bind(3, file.getPath());
         statement.step();
+    }
+    
+    public List<File> all() throws SQLiteException {
+        List<File> fileList = new ArrayList<>();
+
+        SQLiteStatement statement = connection.prepare(allQuery);
+        while (statement.step()) {
+            File file = new File();
+            file.setId((Integer) statement.columnValue(0));
+            file.setFname((String) statement.columnValue(1));
+            file.setPath((String) statement.columnValue(2));
+            file.setIs_dir((Boolean) statement.columnValue(3));
+            file.setBody((String) statement.columnValue(4));
+            file.setFsize((Integer) statement.columnValue(5));
+            file.setFtype((String) statement.columnValue(6));
+            file.setCreated_at((Timestamp) statement.columnValue(7));
+            file.setRead_at((Timestamp) statement.columnValue(8));
+            file.setUpdated_at((Timestamp) statement.columnValue(9));
+            file.setOwner((String) statement.columnValue(10));
+
+            fileList.add(file);
+        }
+
+        return fileList;
     }
 }

@@ -4,7 +4,6 @@ import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 import entity.File;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,6 @@ public class TemporaryDAO {
     }
 
     public String read(File file) throws SQLiteException {
-        
         return null;
     }
 
@@ -70,7 +68,7 @@ public class TemporaryDAO {
         statement.bind(2, file.getPath());
         statement.step();
     }
-    
+
     public List<File> readdir(String path) throws SQLiteException {
         List<File> fileList = new ArrayList<>();
 

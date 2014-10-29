@@ -22,4 +22,8 @@ public class DAOFactory implements AutoCloseable {
     public FileDAO getFileDAO() {
         return new FileDAO(connection);
     }
+    
+    public TemporaryDAO getTemporaryDAO() {
+        return new TemporaryDAO(connection);
+    }
 }
