@@ -8,8 +8,10 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 import service.ClientService;
 import util.Connection;
 import util.Message;
@@ -53,8 +55,19 @@ public class ClientThread implements Runnable {
                 frame.getLabelDataModificacao().setText("Data de modificação: " + file.getUpdated_at());
                 frame.getLabelProprietario().setText("Proprietário: " + file.getOwner());
             } else if (action.equals(Action.READDIR)) {
+                ((DefaultTableModel) frame.getTableDirectory().getModel()).getDataVector().removeAllElements();
+                ((DefaultTableModel) frame.getTableDirectory().getModel()).fireTableDataChanged();
                 for (Temporary t: (List<Temporary>) message.getData()) {
                     System.out.println(t.getFname());
+                    DefaultTableModel m = (DefaultTableModel) frame.getTableDirectory().getModel();
+                    Vector v = new Vector();
+                    if (t.getIs_dir().equals(Frame.FOLDER)) {
+                        v.add("Pasta");
+                    } else {
+                        v.add("Arquivo");
+                    }
+                    v.add(t.getFname());
+                    m.addRow(v);
                 }
             } else if (action.equals(Action.MKDIR)) {
                 

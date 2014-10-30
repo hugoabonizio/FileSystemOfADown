@@ -5,8 +5,15 @@
         <group>
             <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/dao/DAOFactory.java</file>
             <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/service/Server.java</file>
+            <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/entity/Temporary.java</file>
+            <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/thread/ListenerSocket.java</file>
+            <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/thread/WaitConnection.java</file>
             <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/service/ServerService.java</file>
+            <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/util/Message.java</file>
             <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/entity/File.java</file>
+            <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/dao/TemporaryDAO.java</file>
+            <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/jdbc/ConnectionFactory.java</file>
+            <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/service/Main.java</file>
             <file>file:/home/hugo/NetBeansProjects/FileSystemOfADown/DistributedFileSystem%20-%20Server/src/dao/FileDAO.java</file>
         </group>
     </open-files>

@@ -20,7 +20,8 @@ public class Frame extends javax.swing.JFrame {
     private final ClientService clientService;
     private List<String> serverList;
     private Integer openedFileId;
-    private static final String FOLDER = "true";
+    public static final String FOLDER = "true";
+    private ForcedListSelectionModel model;
 
     public Frame(String serverAddress, int mePort) {
         super("Windows Explorer");
@@ -271,12 +272,12 @@ public class Frame extends javax.swing.JFrame {
 
     private void navigationBarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_navigationBarKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            requestReaddir("");
+            requestReaddir();
         }
     }//GEN-LAST:event_navigationBarKeyPressed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        requestReaddir("");
+        requestReaddir();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void tableDirectoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableDirectoryMouseClicked
@@ -425,14 +426,15 @@ public class Frame extends javax.swing.JFrame {
 
     private void extraInits() {
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
-        getTableDirectory().setSelectionModel(new ForcedListSelectionModel());
+        setModel(new ForcedListSelectionModel());
+        getTableDirectory().setSelectionModel(getModel());
     }
 
     private void tableDirectoryReadEvt(int row) {
-        if (getTableDirectory().getValueAt(row, 0).equals(FOLDER)) {
+        if (getTableDirectory().getValueAt(row, 0).equals("Pasta")) {
             String folder = getTableDirectory().getValueAt(row, 1) + File.separator;
             getNavigationBar().setText(getNavigationBar().getText() + folder);
-            requestReaddir(folder);
+            requestReaddir();
         } else {
             entity.File file = new entity.File();
             file.setFname((String) getTableDirectory().getValueAt(row, 1));
@@ -448,18 +450,18 @@ public class Frame extends javax.swing.JFrame {
         entity.File file = new entity.File();
         file.setFname((String) tableDirectory.getValueAt(row, 1));
         file.setPath(navigationBar.getText());
-        if (getTableDirectory().getValueAt(row, 0).equals(FOLDER)) {
+        if (getTableDirectory().getValueAt(row, 0).equals("Pasta")) {
             requestRmdir(file);
         } else {
             requestDelete(file);
         }
     }
 
-    private void requestReaddir(String folder) {
+    private void requestReaddir() {
         serverList = new LinkedList<>();
         Message m = new Message();
         m.setAction(Action.READDIR);
-        m.setData(getNavigationBar().getText() + folder);
+        m.setData(getNavigationBar().getText());
         m.setSrc(clientService.getMe());
 
         String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
@@ -694,5 +696,13 @@ public class Frame extends javax.swing.JFrame {
 
     public void setOpenedFileId(Integer openedFileId) {
         this.openedFileId = openedFileId;
+    }
+
+    public ForcedListSelectionModel getModel() {
+        return model;
+    }
+
+    public void setModel(ForcedListSelectionModel model) {
+        this.model = model;
     }
 }
