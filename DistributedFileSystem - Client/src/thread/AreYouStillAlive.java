@@ -20,12 +20,12 @@ public class AreYouStillAlive implements Runnable {
     @SuppressWarnings("")
     @Override
     public void run() {
-        while (true) {
-            try {
+        try {
+            while (true) {
                 testConnection(clientService.getServer());
-            } catch (IOException ex) {
-                System.out.println("CAIU!");
             }
+        } catch (IOException ex) {
+            System.out.println("CAIU!");
         }
     }
 
@@ -35,24 +35,19 @@ public class AreYouStillAlive implements Runnable {
         message.setData("VOCE AINDA ESTA VIVO?");
         message.setAction(Action.PING);
         c.send(message);
-        
-        /*if ((System.currentTimeMillis() - clientService.lastPING) > 5000) {
-            System.out.println("CAIU");
-        }*/
-        
+
         try {
             //Message message_aux = null;
             Thread.sleep(TIMEOUT);
             /*if ((message_aux = (Message) c.getInput().readObject()) == null) {
-                Message answer = new Message();
-                System.out.println("getSrc = " + clientService.getMe());
-                answer.setSrc(clientService.getMe());
-                answer.setData(c);
-                answer.setAction(Action.DISCONNECT);
-                Connection.trySendRequest(clientService.getOther_servers(), message, true);
-                //cliente necessita se conectar em outro servidor
-            }*/
-        //} catch (InterruptedException | IOException | ClassNotFoundException ex) {
+             Message answer = new Message();
+             answer.setSrc(clientService.getMe());
+             answer.setData(c);
+             answer.setAction(Action.DISCONNECT);
+             Connection.trySendRequest(clientService.getOther_servers(), message, true);
+             //cliente necessita se conectar em outro servidor
+             }*/
+            //} catch (InterruptedException | IOException | ClassNotFoundException ex) {
         } catch (Exception ex) {
             Logger.getLogger(AreYouStillAlive.class.getName()).log(Level.SEVERE, null, ex);
         }

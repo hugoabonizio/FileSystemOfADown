@@ -1,7 +1,7 @@
 package frame;
 
+import entity.Local;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -23,12 +23,12 @@ public class Frame extends javax.swing.JFrame {
     public static final String FOLDER = "true";
     private ForcedListSelectionModel model;
 
-    public Frame(String serverAddress, int mePort) {
+    public Frame(String owner, String serverAddress, int mePort) {
         super("Windows Explorer");
         initComponents();
         extraInits();
 
-        clientService = new ClientService(this, serverAddress, mePort);
+        clientService = new ClientService(this, owner, serverAddress, mePort);
     }
 
     @SuppressWarnings("unchecked")
@@ -300,10 +300,11 @@ public class Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_tableDirectoryKeyPressed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        entity.File file = new entity.File();
+        Date data = new Date();
+        entity.Local file = new entity.Local();
         file.setBody(txtFile.getText());
         file.setFsize(txtFile.getText().length());
-        file.setUpdated_at((Timestamp) new Date());
+        file.setUpdated_at(new Timestamp(data.getTime()));
         file.setId(openedFileId);
 
         Message m = new Message();
@@ -323,9 +324,10 @@ public class Frame extends javax.swing.JFrame {
 
     private void txtNameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNameKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            entity.File file = new entity.File();
+            Date data = new Date();
+            entity.Local file = new entity.Local();
             file.setFname(txtName.getText());
-            file.setUpdated_at((Timestamp) new Date());
+            file.setUpdated_at(new Timestamp(data.getTime()));
             file.setId(openedFileId);
 
             Message m = new Message();
@@ -346,14 +348,14 @@ public class Frame extends javax.swing.JFrame {
     private void btnNewFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewFolderActionPerformed
         Date data = new Date();
 
-        entity.File file = new entity.File();
+        entity.Local file = new entity.Local();
         file.setFname(JOptionPane.showInputDialog(null, "Nome da pasta: "));
         file.setPath(navigationBar.getText());
         file.setIs_dir(true);
         file.setFsize(0);
-        file.setCreated_at((Timestamp) data);
-        file.setRead_at((Timestamp) data);
-        file.setUpdated_at((Timestamp) data);
+        file.setCreated_at(new Timestamp(data.getTime()));
+        file.setRead_at(new Timestamp(data.getTime()));
+        file.setUpdated_at(new Timestamp(data.getTime()));
         file.setOwner(clientService.getMe());
 
         Message m = new Message();
@@ -361,12 +363,11 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        for (String s : serverList) {
-            try {
-                Connection.send(s, m);
-            } catch (IOException ex) {
-                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+        try {
+            Connection.send(address, m);
+        } catch (IOException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
         //adicionar row a JTable
     }//GEN-LAST:event_btnNewFolderActionPerformed
@@ -374,16 +375,16 @@ public class Frame extends javax.swing.JFrame {
     private void btnNewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewFileActionPerformed
         Date data = new Date();
 
-        entity.File file = new entity.File();
+        entity.Local file = new entity.Local();
         file.setFname(JOptionPane.showInputDialog(null, "Nome do arquivo: "));
         file.setPath(navigationBar.getText());
         file.setIs_dir(false);
         file.setBody("");
         file.setFsize(0);
         file.setFtype(".txt");
-        file.setCreated_at((Timestamp) data);
-        file.setRead_at((Timestamp) data);
-        file.setUpdated_at((Timestamp) data);
+        file.setCreated_at(new Timestamp(data.getTime()));
+        file.setRead_at(new Timestamp(data.getTime()));
+        file.setUpdated_at(new Timestamp(data.getTime()));
         file.setOwner(clientService.getMe());
 
         Message m = new Message();
@@ -391,12 +392,11 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        for (String s : serverList) {
-            try {
-                Connection.send(s, m);
-            } catch (IOException ex) {
-                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+        try {
+            Connection.send(address, m);
+        } catch (IOException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
         //adicionar row a JTable
     }//GEN-LAST:event_btnNewFileActionPerformed
@@ -432,14 +432,16 @@ public class Frame extends javax.swing.JFrame {
 
     private void tableDirectoryReadEvt(int row) {
         if (getTableDirectory().getValueAt(row, 0).equals("Pasta")) {
-            String folder = getTableDirectory().getValueAt(row, 1) + File.separator;
+            String folder = getTableDirectory().getValueAt(row, 1) + "/";
             getNavigationBar().setText(getNavigationBar().getText() + folder);
             requestReaddir();
         } else {
-            entity.File file = new entity.File();
+            Date data = new Date();
+            entity.Local file = new entity.Local();
             file.setFname((String) getTableDirectory().getValueAt(row, 1));
             file.setPath(getNavigationBar().getText());
-            file.setRead_at((Timestamp) new Date());
+            file.setRead_at(new Timestamp(data.getTime()));
+            file.setOwner(clientService.getOwner());
 
             requestRead(file);
             requestGetAttributes(file);
@@ -447,9 +449,10 @@ public class Frame extends javax.swing.JFrame {
     }
 
     private void tableDirectoryDeleteEvt(int row) {
-        entity.File file = new entity.File();
+        entity.Local file = new entity.Local();
         file.setFname((String) tableDirectory.getValueAt(row, 1));
         file.setPath(navigationBar.getText());
+        file.setOwner(clientService.getOwner());
         if (getTableDirectory().getValueAt(row, 0).equals("Pasta")) {
             requestRmdir(file);
         } else {
@@ -461,7 +464,10 @@ public class Frame extends javax.swing.JFrame {
         serverList = new LinkedList<>();
         Message m = new Message();
         m.setAction(Action.READDIR);
-        m.setData(getNavigationBar().getText());
+        Local f = new Local();
+        f.setPath(getNavigationBar().getText());
+        f.setOwner(clientService.getOwner());
+        m.setData(f);
         m.setSrc(clientService.getMe());
 
         String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
@@ -472,7 +478,7 @@ public class Frame extends javax.swing.JFrame {
         }
     }
 
-    private void requestRead(entity.File file) {
+    private void requestRead(entity.Local file) {
         Message m = new Message();
         m.setAction(Action.READ);
         m.setData(file);
@@ -481,7 +487,7 @@ public class Frame extends javax.swing.JFrame {
         Connection.trySendRequest(serverList, m, false);
     }
 
-    private void requestGetAttributes(entity.File file) {
+    private void requestGetAttributes(entity.Local file) {
         Message m = new Message();
         m.setAction(Action.GET_ATTRIBUTES);
         m.setData(file);
@@ -490,7 +496,7 @@ public class Frame extends javax.swing.JFrame {
         Connection.trySendRequest(serverList, m, false);
     }
 
-    private void requestRmdir(entity.File file) {
+    private void requestRmdir(entity.Local file) {
         Message m = new Message();
         m.setAction(Action.RMDIR);
         m.setData(file);
@@ -506,7 +512,7 @@ public class Frame extends javax.swing.JFrame {
         //remover row da JTable
     }
 
-    private void requestDelete(entity.File file) {
+    private void requestDelete(entity.Local file) {
         Message m = new Message();
         m.setAction(Action.DELETE);
         m.setData(file);

@@ -14,13 +14,14 @@ public class Client {
         generateGUI();
 
         try {
+            final String owner = JOptionPane.showInputDialog(null, "Quem é você?");
             final String serverAddress = JOptionPane.showInputDialog(null, "Insira IP:Porta do servidor ao qual deseja se conectar", Inet4Address.getLocalHost().getHostAddress() + ":");
             final Random random = new Random();
 
             java.awt.EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    new Frame(serverAddress, random.nextInt(1000) + 11000).setVisible(true);
+                    new Frame(owner, serverAddress, random.nextInt(1000) + 11000).setVisible(true);
                 }
             });
         } catch (UnknownHostException ex) {

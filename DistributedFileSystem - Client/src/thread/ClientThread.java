@@ -1,6 +1,6 @@
 package thread;
 
-import entity.File;
+import entity.Local;
 import entity.Temporary;
 import frame.Frame;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class ClientThread implements Runnable {
         try {
             message = (Message) new ObjectInputStream(socket.getInputStream()).readObject();
             Action action = message.getAction();
-            System.out.println("Action: " + action);
+            //System.out.println("Action: " + action);
 
             if (action.equals(Action.CONNECT_CLIENT)) {
                 clientService.setOther_servers((Set<Connection>) message.getData());
@@ -44,7 +44,7 @@ public class ClientThread implements Runnable {
                 frame.getBtnSave().setEnabled(true);
                 frame.getTxtFile().setText((String) message.getData());
             } else if (action.equals(Action.GET_ATTRIBUTES)) {
-                File file = (File) message.getData();
+                Local file = (Local) message.getData();
                 frame.setOpenedFileId(file.getId());
                 frame.getTxtName().setEnabled(true);
                 frame.getTxtName().setText(file.getFname());
@@ -55,24 +55,11 @@ public class ClientThread implements Runnable {
                 frame.getLabelDataModificacao().setText("Data de modificação: " + file.getUpdated_at());
                 frame.getLabelProprietario().setText("Proprietário: " + file.getOwner());
             } else if (action.equals(Action.READDIR)) {
-                ((DefaultTableModel) frame.getTableDirectory().getModel()).getDataVector().removeAllElements();
-                ((DefaultTableModel) frame.getTableDirectory().getModel()).fireTableDataChanged();
-                for (Temporary t: (List<Temporary>) message.getData()) {
-                    System.out.println(t.getFname());
-                    DefaultTableModel m = (DefaultTableModel) frame.getTableDirectory().getModel();
-                    Vector v = new Vector();
-                    if (t.getIs_dir().equals(Frame.FOLDER)) {
-                        v.add("Pasta");
-                    } else {
-                        v.add("Arquivo");
-                    }
-                    v.add(t.getFname());
-                    m.addRow(v);
-                }
+                addRows(message);
             } else if (action.equals(Action.MKDIR)) {
-                
+
             } else if (action.equals(Action.CREATE)) {
-                
+
             } else if (action.equals(Action.PING)) {
                 clientService.lastPING = System.currentTimeMillis();
             }
@@ -80,6 +67,22 @@ public class ClientThread implements Runnable {
             socket.close();
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void addRows(Message message) {
+        ((DefaultTableModel) frame.getTableDirectory().getModel()).getDataVector().removeAllElements();
+        ((DefaultTableModel) frame.getTableDirectory().getModel()).fireTableDataChanged();
+        for (Temporary t : (List<Temporary>) message.getData()) {
+            DefaultTableModel m = (DefaultTableModel) frame.getTableDirectory().getModel();
+            Vector v = new Vector();
+            if (t.getIs_dir().equals(Frame.FOLDER)) {
+                v.add("Pasta");
+            } else {
+                v.add("Arquivo");
+            }
+            v.add(t.getFname());
+            m.addRow(v);
         }
     }
 

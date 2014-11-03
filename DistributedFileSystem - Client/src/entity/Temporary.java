@@ -8,6 +8,8 @@ public class Temporary implements Serializable {
     private String fname;
     private String path;
     private String is_dir;
+    private String ip;
+    private String owner;
 
     public int getId() {
         return id;
@@ -42,5 +44,21 @@ public class Temporary implements Serializable {
     }
     public void setIs_dir(Boolean is_dir) {
         this.is_dir = is_dir.toString();
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

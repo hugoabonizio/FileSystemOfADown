@@ -38,11 +38,11 @@ public class Server {
         List<String> servers = new ArrayList<>();
         String input;
         try {
-            while (!(input = JOptionPane.showInputDialog(null, "Insira IP:Porta do servidor", Inet4Address.getLocalHost().getHostAddress() + ":")).equals("ok")) {
+            while ((input = JOptionPane.showInputDialog(null, "Insira IP:Porta do servidor", Inet4Address.getLocalHost().getHostAddress() + ":")) != null) {
                 servers.add(input);
             }
             Random random = new Random();
-            new ServerService(servers, random.nextInt(1000) + 20000);
+            ServerService serverService = new ServerService(servers, random.nextInt(1000) + 20000);
         } catch (UnknownHostException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }

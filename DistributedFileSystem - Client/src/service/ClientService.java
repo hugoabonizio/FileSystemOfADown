@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import thread.AreYouStillAlive;
-import thread.ClientThread;
 import thread.WaitConnection;
 import util.Connection;
 import util.Message;
@@ -22,14 +21,16 @@ import util.Message.Action;
 public class ClientService {
 
     private Frame frame;
+    private String owner;
     private String me;
     private ServerSocket meSS;
     private Connection server;
     private Set<Connection> other_servers;
     public long lastPING = System.currentTimeMillis();
 
-    public ClientService(Frame frame, String serverAddress, int mePort) {
+    public ClientService(Frame frame, String owner, String serverAddress, int mePort) {
         this.frame = frame;
+        this.owner = owner;
         this.other_servers = new HashSet<>();
         
         listen(mePort);
@@ -115,5 +116,13 @@ public class ClientService {
 
     public void setOther_servers(Set<Connection> other_servers) {
         this.other_servers = other_servers;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

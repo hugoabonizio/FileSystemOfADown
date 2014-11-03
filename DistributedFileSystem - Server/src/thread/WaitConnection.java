@@ -33,9 +33,7 @@ public class WaitConnection implements Runnable {
                 connection.setSocket(socket);
 
                 new Thread(new ListenerSocket(serverService, connection)).start();
-            } catch (IOException ex) {
-                Logger.getLogger(WaitConnection.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLiteException ex) {
+            } catch (IOException | SQLiteException ex) {
                 Logger.getLogger(WaitConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

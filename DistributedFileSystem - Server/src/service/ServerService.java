@@ -1,10 +1,9 @@
 package service;
 
+import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import thread.WaitConnection;
-import dao.DAOFactory;
-import dao.FileDAO;
-import dao.TemporaryDAO;
+import dao.LocalDAO;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -21,18 +20,17 @@ import util.Message;
 
 public class ServerService {
 
-    private FileDAO fileDAO;
-    private TemporaryDAO tempDAO;
     private String me;
     private ServerSocket meSS;
     private Set<Connection> serverSet;
+    private SQLiteConnection localConnection;
+    private LocalDAO localDAO;
 
     public ServerService(List<String> servers, int mePort) {
-        DAOFactory daoFactory;
         try {
-            daoFactory = new DAOFactory();
-            fileDAO = daoFactory.getFileDAO();
-            tempDAO = daoFactory.getTemporaryDAO();
+            localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
+            localConnection.open(true);
+            localDAO = new LocalDAO(localConnection);
         } catch (SQLiteException ex) {
             Logger.getLogger(ServerService.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -61,7 +59,7 @@ public class ServerService {
             Message message = new Message();
             try {
                 message.setSrc(me);
-                message.setData(fileDAO.all());
+                message.setData(localDAO.all());
                 message.setAction(Message.Action.CONNECT_SERVER);
                 connection.send(message);
             } catch (SQLiteException ex) {
@@ -92,28 +90,12 @@ public class ServerService {
         this.meSS = meSS;
     }
 
-    public FileDAO getFileDAO() {
-        return fileDAO;
-    }
-
-    public void setFileDAO(FileDAO fileDAO) {
-        this.fileDAO = fileDAO;
-    }
-
     public String getMe() {
         return me;
     }
 
     public void setMe(String me) {
         this.me = me;
-    }
-
-    public TemporaryDAO getTempDAO() {
-        return tempDAO;
-    }
-
-    public void setTempDAO(TemporaryDAO tempDAO) {
-        this.tempDAO = tempDAO;
     }
 
     public Set<Connection> getServerSet() {
