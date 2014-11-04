@@ -3,12 +3,13 @@ package util;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Connection {
+public class Connection implements Serializable {
 
     private ObjectOutputStream output;
     private ObjectInputStream input;
@@ -89,7 +90,11 @@ public class Connection {
             Socket socket = new Socket(ip, port);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(obj);
+            Thread.sleep(200);
+            socket.close();
         } catch (IOException ex) {
+            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -101,5 +106,9 @@ public class Connection {
         } catch (IOException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void send(Message obj, boolean is_ping) throws IOException {
+        output.writeObject(obj);
     }
 }

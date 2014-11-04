@@ -11,10 +11,10 @@ import java.util.List;
 public class TemporaryDAO {
 
     private final SQLiteConnection connection;
-    private static final String createQuery = "INSERT INTO files (fname, path, is_dir, owner, ip) VALUES (?, ?, ?, ?, ?) RETURNING id;";
+    private static final String createQuery = "INSERT OR REPLACE INTO files (fname, path, is_dir, owner, ip) VALUES (?, ?, ?, ?, ?)"; // RETURNING id;";
     private static final String deleteQuery = "DELETE FROM files WHERE fname = ? AND path = ? AND owner = ?;";
     private static final String renameQuery = "UPDATE files SET fname = ? WHERE id = ?;";
-    private static final String mkdirQuery = "INSERT INTO files (fname, path, is_dir, owner, ip) VALUES (?, ?, ?, ?, ?) RETURNING id";
+    private static final String mkdirQuery = "INSERT INTO files (fname, path, is_dir, owner, ip) VALUES (?, ?, ?, ?, ?)"; // RETURNING id";
     private static final String readdirQuery = "SELECT * FROM files WHERE path = ? AND owner = ?;";
 
     public TemporaryDAO(SQLiteConnection connection) {
@@ -35,6 +35,7 @@ public class TemporaryDAO {
         if (statement.step()) {
             return (Integer) statement.columnValue(0);
         }
+        statement.dispose();
         return null;
     }
 

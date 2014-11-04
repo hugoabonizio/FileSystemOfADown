@@ -4,7 +4,6 @@ import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 import entity.Local;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,9 +89,9 @@ public class LocalDAO {
             file.setIs_dir((Boolean) statement.columnValue(3));
             file.setFsize((Integer) statement.columnValue(5));
             file.setFtype((String) statement.columnValue(6));
-            file.setCreated_at((Timestamp) statement.columnValue(7));
-            file.setRead_at((Timestamp) statement.columnValue(8));
-            file.setUpdated_at((Timestamp) statement.columnValue(9));
+            file.setCreated_at((String) statement.columnValue(7));
+            file.setRead_at((String) statement.columnValue(8));
+            file.setUpdated_at((String) statement.columnValue(9));
             file.setOwner((String) statement.columnValue(10));
         }
         updateRead_at(arg);
@@ -152,9 +151,9 @@ public class LocalDAO {
             file.setBody((String) statement.columnValue(4));
             file.setFsize((Integer) statement.columnValue(5));
             file.setFtype((String) statement.columnValue(6));
-            file.setCreated_at((Timestamp) statement.columnValue(7));
-            file.setRead_at((Timestamp) statement.columnValue(8));
-            file.setUpdated_at((Timestamp) statement.columnValue(9));
+            file.setCreated_at((String) statement.columnValue(7));
+            file.setRead_at((String) statement.columnValue(8));
+            file.setUpdated_at((String) statement.columnValue(9));
             file.setOwner((String) statement.columnValue(10));
 
             fileList.add(file);
@@ -181,13 +180,13 @@ public class LocalDAO {
             file.setId((Integer) statement.columnValue(0));
             file.setFname((String) statement.columnValue(1));
             file.setPath((String) statement.columnValue(2));
-            file.setIs_dir((Boolean) statement.columnValue(3));
+            file.setIs_dir((String) statement.columnValue(3));
             file.setBody((String) statement.columnValue(4));
             file.setFsize((Integer) statement.columnValue(5));
             file.setFtype((String) statement.columnValue(6));
-            file.setCreated_at((Timestamp) statement.columnValue(7));
-            file.setRead_at((Timestamp) statement.columnValue(8));
-            file.setUpdated_at((Timestamp) statement.columnValue(9));
+            file.setCreated_at((String) statement.columnValue(7));
+            file.setRead_at((String) statement.columnValue(8));
+            file.setUpdated_at((String) statement.columnValue(9));
             file.setOwner((String) statement.columnValue(10));
 
             fileList.add(file);

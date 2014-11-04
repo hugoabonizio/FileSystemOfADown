@@ -4,8 +4,10 @@ import com.almworks.sqlite4java.SQLiteException;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -14,8 +16,8 @@ public class Server {
 
     public static void main(String[] args) throws SQLiteException {
 
-        /*Logger.getLogger("com.almworks.sqlite4java").setLevel(Level.OFF);
-         SQLiteConnection session_files = new SQLiteConnection(new File("database/temporary.db"));
+        Logger.getLogger("com.almworks.sqlite4java").setLevel(Level.OFF);
+        /* SQLiteConnection session_files = new SQLiteConnection(new File("database/temporary.db"));
          SQLiteConnection local_files = new SQLiteConnection(new File("database/local_files.db"));
          session_files.open(true);
          local_files.open(true);
@@ -35,7 +37,7 @@ public class Server {
          }
 
          // session_files.dispose();*/
-        List<String> servers = new ArrayList<>();
+        Set<String> servers = new HashSet<>();
         String input;
         try {
             while ((input = JOptionPane.showInputDialog(null, "Insira IP:Porta do servidor", Inet4Address.getLocalHost().getHostAddress() + ":")) != null) {

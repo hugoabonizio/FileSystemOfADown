@@ -2,7 +2,6 @@ package service;
 
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
-import thread.WaitConnection;
 import dao.LocalDAO;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,8 +12,11 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import thread.AreYouStillAlive;
+import thread.WaitConnection;
 import util.Connection;
 import util.Message;
 
@@ -23,26 +25,31 @@ public class ServerService {
     private String me;
     private ServerSocket meSS;
     private Set<Connection> serverSet;
+    private Set<String> serverIPSet;
     private SQLiteConnection localConnection;
     private LocalDAO localDAO;
 
-    public ServerService(List<String> servers, int mePort) {
+    public ServerService(Set<String> servers, int mePort) {
         try {
             localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
             localConnection.open(true);
             localDAO = new LocalDAO(localConnection);
+            serverIPSet = servers;
         } catch (SQLiteException ex) {
             Logger.getLogger(ServerService.class.getName()).log(Level.SEVERE, null, ex);
         }
-        serverSet = new HashSet<>();
+        serverSet = new CopyOnWriteArraySet<>();
 
+        listen(mePort);
+        
         for (String s : servers) {
             connectToServer(s);
         }
-        listen(mePort);
+        
+        ping();
     }
 
-    private void connectToServer(String server) throws NumberFormatException {
+    public void connectToServer(String server) throws NumberFormatException {
         Socket socket;
         try {
             String ip = server.split(":")[0];
@@ -55,11 +62,16 @@ public class ServerService {
             connection.setIp(ip);
             connection.setPort(port);
             connection.setSocket(socket);
+            
+            serverSet.add(connection);
 
             Message message = new Message();
             try {
+                SQLiteConnection tmpConnection = new SQLiteConnection(new java.io.File("database/local.db"));
+                tmpConnection.open(true);
+                
                 message.setSrc(me);
-                message.setData(localDAO.all());
+                message.setData((new LocalDAO(tmpConnection)).all());
                 message.setAction(Message.Action.CONNECT_SERVER);
                 connection.send(message);
             } catch (SQLiteException ex) {
@@ -80,6 +92,10 @@ public class ServerService {
         } catch (IOException ex) {
             Logger.getLogger(ServerService.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private void ping() {
+        new Thread(new AreYouStillAlive(this)).start();
     }
 
     public ServerSocket getMeSS() {
@@ -104,5 +120,13 @@ public class ServerService {
 
     public void setServerSet(Set<Connection> serverSet) {
         this.serverSet = serverSet;
+    }
+
+    public Set<String> getServerIPSet() {
+        return serverIPSet;
+    }
+
+    public void setServerIPSet(Set<String> serverIPSet) {
+        this.serverIPSet = serverIPSet;
     }
 }

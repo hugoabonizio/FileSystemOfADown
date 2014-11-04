@@ -8,8 +8,11 @@ import entity.Local;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.ServerService;
@@ -37,6 +40,7 @@ public class ListenerSocket implements Runnable {
         try {
             tempConnection = new SQLiteConnection(new java.io.File("database/temporary.db"));
             tempConnection.open(true);
+            tempConnection.setBusyTimeout(10000);
             tempDAO = new TemporaryDAO(tempConnection);
 
             localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
@@ -49,11 +53,14 @@ public class ListenerSocket implements Runnable {
         try {
             while ((message = (Message) connection.getInput().readObject()) != null) {
                 Action action = message.getAction();
-                if (action != Action.PING) {
+                if (action != Action.PING && action != Action.PING_ACK) {
                     System.out.println("Action: " + action);
                 }
 
                 if (action.equals(Action.CONNECT_SERVER)) {
+                    
+                    //System.out.println("getSrc: " + message.getSrc());
+                    
                     String ip = message.getSrc().split(":")[0];
                     int port = Integer.parseInt(message.getSrc().split(":")[1]);
 
@@ -66,9 +73,34 @@ public class ListenerSocket implements Runnable {
                     c.setSocket(socket);
 
                     serverService.getServerSet().add(c);
+                    serverService.getServerIPSet().add(message.getSrc());
+                    
+                    
                     for (Local f : (List<Local>) message.getData()) {
+                        System.out.println("tentando inserir " + f.getFname());
                         tempDAO.create(f, message.getSrc());
                     }
+                    
+                    for (String server_ip: serverService.getServerIPSet()) {
+                        System.out.println("server " + server_ip);
+                    }
+                    /*
+                    Message sendServers = new Message();
+                    sendServers.setAction(Action.SERVER_LIST);
+                    sendServers.setSrc(serverService.getMe());
+                    sendServers.setData(serverService.getServerIPSet());
+                    c.send(sendServers);
+                    
+                    
+                    
+                } else if (action.equals(Action.SERVER_LIST)) {
+                    
+                    serverService.getServerSet().addAll((Set<Connection>) message.getData());
+                    for (String ip: (Set<String>) message.getData()) {
+                        System.out.println("conenctando à: " + ip);
+                        serverService.connectToServer(ip);
+                    }*/
+                    
                 } else if (action.equals(Action.CONNECT_CLIENT)) {
                     answer = new Message();
                     answer.setAction(Action.CONNECT_CLIENT);
@@ -159,14 +191,28 @@ public class ListenerSocket implements Runnable {
                     answer = new Message();
                     answer.setSrc(serverService.getMe());
                     answer.setData("ESTOU VIVO POR ENQUANTO...");
-                    answer.setAction(Action.PING);
+                    answer.setAction(Action.PING_ACK);
                     Connection.send(message.getSrc(), answer);
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            if (!(ex instanceof SocketException)) {
+                //System.out.println("FAIÔ " + connection.getIp() + ":" + connection.getPort());
+                //serverService.getServerSet().remove(connection);
+                //serverService.getServerIPSet().remove(connection.getIp() + ":" + connection.getPort());
+                //Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } catch (ClassNotFoundException | SQLiteException ex) {
+            ex.printStackTrace();
             sendErrorAnswer(connection, ex.getMessage());
+        } finally {
+            localConnection.dispose();
+            tempConnection.dispose();
+            try {
+                connection.getSocket().close();
+            } catch (IOException ex) {
+                Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

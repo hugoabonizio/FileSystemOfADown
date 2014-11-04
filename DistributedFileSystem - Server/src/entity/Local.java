@@ -1,20 +1,19 @@
 package entity;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 public class Local implements Serializable {
 
     private Integer id;
     private String fname;
     private String path;
-    private Boolean is_dir;
+    private String is_dir;
     private String body;
     private Integer fsize;
     private String ftype;
-    private Timestamp created_at;
-    private Timestamp read_at;
-    private Timestamp updated_at;
+    private String created_at;
+    private String read_at;
+    private String updated_at;
     private String owner;
 
     public String getPath() {
@@ -41,12 +40,15 @@ public class Local implements Serializable {
         this.fname = fname;
     }
 
-    public Boolean getIs_dir() {
+    public String getIs_dir() {
         return is_dir;
     }
 
-    public void setIs_dir(Boolean is_dir) {
+    public void setIs_dir(String is_dir) {
         this.is_dir = is_dir;
+    }
+    public void setIs_dir(Boolean is_dir) {
+        this.is_dir = is_dir.toString();
     }
 
     public String getBody() {
@@ -73,19 +75,19 @@ public class Local implements Serializable {
         this.ftype = ftype;
     }
 
-    public Timestamp getCreated_at() {
+    public String getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(Timestamp created_at) {
+    public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
 
-    public Timestamp getUpdated_at() {
+    public String getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(Timestamp updated_at) {
+    public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
     }
 
@@ -97,11 +99,11 @@ public class Local implements Serializable {
         this.owner = owner;
     }
 
-    public Timestamp getRead_at() {
+    public String getRead_at() {
         return read_at;
     }
 
-    public void setRead_at(Timestamp read_at) {
+    public void setRead_at(String read_at) {
         this.read_at = read_at;
     }
 }
