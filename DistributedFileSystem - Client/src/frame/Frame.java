@@ -3,10 +3,9 @@ package frame;
 import entity.Local;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -18,9 +17,9 @@ import util.Message.Action;
 public class Frame extends javax.swing.JFrame {
 
     private final ClientService clientService;
-    private List<String> serverList;
+    private Set<String> serverSet;
     private Integer openedFileId;
-    public static final String FOLDER = "true";
+    private static final String FOLDER = "Pasta";
     private ForcedListSelectionModel model;
 
     public Frame(String owner, String serverAddress, int mePort) {
@@ -304,7 +303,7 @@ public class Frame extends javax.swing.JFrame {
         entity.Local file = new entity.Local();
         file.setBody(txtFile.getText());
         file.setFsize(txtFile.getText().length());
-        file.setUpdated_at(new Timestamp(data.getTime()));
+        file.setUpdated_at(Long.toString(data.getTime()));
         file.setId(openedFileId);
 
         Message m = new Message();
@@ -312,7 +311,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        for (String s : serverList) {
+        for (String s : getServerSet()) {
             try {
                 Connection.send(s, m);
             } catch (IOException ex) {
@@ -327,7 +326,7 @@ public class Frame extends javax.swing.JFrame {
             Date data = new Date();
             entity.Local file = new entity.Local();
             file.setFname(txtName.getText());
-            file.setUpdated_at(new Timestamp(data.getTime()));
+            file.setUpdated_at(Long.toString(data.getTime()));
             file.setId(openedFileId);
 
             Message m = new Message();
@@ -335,7 +334,7 @@ public class Frame extends javax.swing.JFrame {
             m.setData(file);
             m.setSrc(clientService.getMe());
 
-            for (String s : serverList) {
+            for (String s : getServerSet()) {
                 try {
                     Connection.send(s, m);
                 } catch (IOException ex) {
@@ -353,9 +352,9 @@ public class Frame extends javax.swing.JFrame {
         file.setPath(navigationBar.getText());
         file.setIs_dir(true);
         file.setFsize(0);
-        file.setCreated_at(new Timestamp(data.getTime()));
-        file.setRead_at(new Timestamp(data.getTime()));
-        file.setUpdated_at(new Timestamp(data.getTime()));
+        file.setCreated_at(Long.toString(data.getTime()));
+        file.setRead_at(Long.toString(data.getTime()));
+        file.setUpdated_at(Long.toString(data.getTime()));
         file.setOwner(clientService.getMe());
 
         Message m = new Message();
@@ -382,9 +381,9 @@ public class Frame extends javax.swing.JFrame {
         file.setBody("");
         file.setFsize(0);
         file.setFtype(".txt");
-        file.setCreated_at(new Timestamp(data.getTime()));
-        file.setRead_at(new Timestamp(data.getTime()));
-        file.setUpdated_at(new Timestamp(data.getTime()));
+        file.setCreated_at(Long.toString(data.getTime()));
+        file.setRead_at(Long.toString(data.getTime()));
+        file.setUpdated_at(Long.toString(data.getTime()));
         file.setOwner(clientService.getMe());
 
         Message m = new Message();
@@ -431,7 +430,7 @@ public class Frame extends javax.swing.JFrame {
     }
 
     private void tableDirectoryReadEvt(int row) {
-        if (getTableDirectory().getValueAt(row, 0).equals("Pasta")) {
+        if (getTableDirectory().getValueAt(row, 0).equals(FOLDER)) {
             String folder = getTableDirectory().getValueAt(row, 1) + "/";
             getNavigationBar().setText(getNavigationBar().getText() + folder);
             requestReaddir();
@@ -440,7 +439,7 @@ public class Frame extends javax.swing.JFrame {
             entity.Local file = new entity.Local();
             file.setFname((String) getTableDirectory().getValueAt(row, 1));
             file.setPath(getNavigationBar().getText());
-            file.setRead_at(new Timestamp(data.getTime()));
+            file.setRead_at(Long.toString(data.getTime()));
             file.setOwner(clientService.getOwner());
 
             requestRead(file);
@@ -453,7 +452,7 @@ public class Frame extends javax.swing.JFrame {
         file.setFname((String) tableDirectory.getValueAt(row, 1));
         file.setPath(navigationBar.getText());
         file.setOwner(clientService.getOwner());
-        if (getTableDirectory().getValueAt(row, 0).equals("Pasta")) {
+        if (getTableDirectory().getValueAt(row, 0).equals(FOLDER)) {
             requestRmdir(file);
         } else {
             requestDelete(file);
@@ -461,12 +460,14 @@ public class Frame extends javax.swing.JFrame {
     }
 
     private void requestReaddir() {
-        serverList = new LinkedList<>();
-        Message m = new Message();
-        m.setAction(Action.READDIR);
+        serverSet = new HashSet<>();
+        
         Local f = new Local();
         f.setPath(getNavigationBar().getText());
         f.setOwner(clientService.getOwner());
+        
+        Message m = new Message();
+        m.setAction(Action.READDIR);
         m.setData(f);
         m.setSrc(clientService.getMe());
 
@@ -484,7 +485,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        Connection.trySendRequest(serverList, m, false);
+        Connection.trySendRequest(getServerSet(), m, false);
     }
 
     private void requestGetAttributes(entity.Local file) {
@@ -493,7 +494,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        Connection.trySendRequest(serverList, m, false);
+        Connection.trySendRequest(getServerSet(), m, false);
     }
 
     private void requestRmdir(entity.Local file) {
@@ -502,7 +503,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        for (String s : serverList) {
+        for (String s : getServerSet()) {
             try {
                 Connection.send(s, m);
             } catch (IOException ex) {
@@ -518,7 +519,7 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        for (String s : serverList) {
+        for (String s : getServerSet()) {
             try {
                 Connection.send(s, m);
             } catch (IOException ex) {
@@ -526,14 +527,6 @@ public class Frame extends javax.swing.JFrame {
             }
         }
         //remover row da JTable
-    }
-
-    public List<String> getServerList() {
-        return serverList;
-    }
-
-    public void setServerList(List<String> serverList) {
-        this.serverList = serverList;
     }
 
     public javax.swing.JButton getBtnNewFile() {
@@ -710,5 +703,13 @@ public class Frame extends javax.swing.JFrame {
 
     public void setModel(ForcedListSelectionModel model) {
         this.model = model;
+    }
+
+    public Set<String> getServerSet() {
+        return serverSet;
+    }
+
+    public void setServerSet(Set<String> serverSet) {
+        this.serverSet = serverSet;
     }
 }

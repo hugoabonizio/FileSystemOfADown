@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
@@ -35,7 +34,9 @@ public class ClientThread implements Runnable {
         try {
             message = (Message) new ObjectInputStream(socket.getInputStream()).readObject();
             Action action = message.getAction();
-            //System.out.println("Action: " + action);
+            if (!action.equals(Action.PING) && !action.equals(Action.PING_ACK)) {
+                System.out.println("Action: " + action);
+            }
 
             if (action.equals(Action.CONNECT_CLIENT)) {
                 clientService.setOther_servers((Set<Connection>) message.getData());
@@ -60,9 +61,9 @@ public class ClientThread implements Runnable {
 
             } else if (action.equals(Action.CREATE)) {
 
-            } else if (action.equals(Action.PING)) {
-                clientService.lastPING = System.currentTimeMillis();
-            }
+            }/* else if (action.equals(Action.PING)) {
+             clientService.lastPING = System.currentTimeMillis();
+             }*/
 
             socket.close();
         } catch (IOException | ClassNotFoundException ex) {
@@ -73,16 +74,17 @@ public class ClientThread implements Runnable {
     private void addRows(Message message) {
         ((DefaultTableModel) frame.getTableDirectory().getModel()).getDataVector().removeAllElements();
         ((DefaultTableModel) frame.getTableDirectory().getModel()).fireTableDataChanged();
+        String[] s;
         for (Temporary t : (List<Temporary>) message.getData()) {
             DefaultTableModel m = (DefaultTableModel) frame.getTableDirectory().getModel();
-            Vector v = new Vector();
-            if (t.getIs_dir().equals(Frame.FOLDER)) {
-                v.add("Pasta");
+            s = new String[2];
+            if (t.getIs_dir().equals("true")) {
+                s[0] = "Pasta";
             } else {
-                v.add("Arquivo");
+                s[0] = "Arquivo";
             }
-            v.add(t.getFname());
-            m.addRow(v);
+            s[1] = t.getFname();
+            m.addRow(s);
         }
     }
 

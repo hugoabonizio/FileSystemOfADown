@@ -26,13 +26,13 @@ public class ClientService {
     private ServerSocket meSS;
     private Connection server;
     private Set<Connection> other_servers;
-    public long lastPING = System.currentTimeMillis();
+    //public long lastPING = System.currentTimeMillis();
 
     public ClientService(Frame frame, String owner, String serverAddress, int mePort) {
         this.frame = frame;
         this.owner = owner;
         this.other_servers = new HashSet<>();
-        
+
         listen(mePort);
         connectToServer(serverAddress);
         ping();
@@ -65,6 +65,7 @@ public class ClientService {
         try {
             me = Inet4Address.getLocalHost().getHostAddress() + ":" + mePort;
             System.out.println("Escutando em: " + me);
+            
             meSS = new ServerSocket(mePort);
             new Thread(new WaitConnection(this, meSS)).start();
         } catch (UnknownHostException ex) {

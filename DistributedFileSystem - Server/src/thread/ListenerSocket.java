@@ -116,7 +116,6 @@ public class ListenerSocket implements Runnable {
                     answer.setData(localDAO.create(file));
                     answer.setSrc(serverService.getMe());
                     Connection.send(message.getSrc(), answer);
-                    //fazer no servidor que o cliente esta conectado
                 } else if (action.equals(Action.DELETE)) {
                     Local file = (Local) message.getData();
                     localDAO.delete(file);
@@ -155,7 +154,6 @@ public class ListenerSocket implements Runnable {
                     answer.setData(localDAO.mkdir(file));
                     answer.setSrc(serverService.getMe());
                     Connection.send(message.getSrc(), answer);
-                    //fazer no servidor que o cliente esta conectado
                 } else if (action.equals(Action.RMDIR)) {
                     Local file = (Local) message.getData();
                     localDAO.rmdir(file);
