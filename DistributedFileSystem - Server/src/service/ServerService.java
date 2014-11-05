@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
@@ -26,30 +24,19 @@ public class ServerService {
     private ServerSocket meSS;
     private Set<Connection> serverSet;
     private Set<String> serverIPSet;
-    private SQLiteConnection localConnection;
-    private LocalDAO localDAO;
 
     public ServerService(Set<String> servers, int mePort) {
-        try {
-            localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
-            localConnection.open(true);
-            localDAO = new LocalDAO(localConnection);
-            serverIPSet = servers;
-        } catch (SQLiteException ex) {
-            Logger.getLogger(ServerService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        serverIPSet = servers;
         serverSet = new CopyOnWriteArraySet<>();
 
         listen(mePort);
-        
         for (String s : servers) {
             connectToServer(s);
         }
-        
         ping();
     }
 
-    public void connectToServer(String server) throws NumberFormatException {
+    private void connectToServer(String server) throws NumberFormatException {
         Socket socket;
         try {
             String ip = server.split(":")[0];
@@ -62,14 +49,14 @@ public class ServerService {
             connection.setIp(ip);
             connection.setPort(port);
             connection.setSocket(socket);
-            
+
             serverSet.add(connection);
 
             Message message = new Message();
             try {
                 SQLiteConnection tmpConnection = new SQLiteConnection(new java.io.File("database/local.db"));
                 tmpConnection.open(true);
-                
+
                 message.setSrc(me);
                 message.setData((new LocalDAO(tmpConnection)).all());
                 message.setAction(Message.Action.CONNECT_SERVER);
@@ -93,7 +80,7 @@ public class ServerService {
             Logger.getLogger(ServerService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void ping() {
         new Thread(new AreYouStillAlive(this)).start();
     }

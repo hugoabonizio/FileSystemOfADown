@@ -29,7 +29,7 @@ public class TemporaryDAO {
         SQLiteStatement statement = connection.prepare(createQuery);
         statement.bind(1, file.getFname());
         statement.bind(2, file.getPath());
-        statement.bind(3, file.getIs_dir().toString());
+        statement.bind(3, file.getIs_dir());
         statement.bind(4, file.getOwner());
         statement.bind(5, ip);
         if (statement.step()) {
@@ -50,7 +50,7 @@ public class TemporaryDAO {
     public void rename(Local file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(renameQuery);
         statement.bind(1, file.getFname());
-        statement.bind(2, file.getUpdated_at().toString());
+        statement.bind(2, file.getUpdated_at());
         statement.bind(3, file.getId());
         statement.step();
     }
@@ -59,7 +59,7 @@ public class TemporaryDAO {
         SQLiteStatement statement = connection.prepare(mkdirQuery);
         statement.bind(1, file.getFname());
         statement.bind(2, file.getPath());
-        statement.bind(3, file.getIs_dir().toString());
+        statement.bind(3, file.getIs_dir());
         statement.bind(4, file.getOwner());
         statement.bind(5, ip);
         if (statement.step()) {

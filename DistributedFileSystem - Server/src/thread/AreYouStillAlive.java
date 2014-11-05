@@ -1,10 +1,8 @@
 package thread;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.ServerService;
@@ -16,7 +14,6 @@ public class AreYouStillAlive implements Runnable {
 
     private final ServerService serverService;
     private static final int TIMEOUT = 1500;
-    private Connection c;
 
     public AreYouStillAlive(ServerService serverService) {
         this.serverService = serverService;
@@ -25,17 +22,19 @@ public class AreYouStillAlive implements Runnable {
     @SuppressWarnings("")
     @Override
     public void run() {
+        Connection c = null;
         try {
             while (true) {
-                Iterator<Connection> ite = new HashSet<>(serverService.getServerSet()).iterator();
-                while (ite.hasNext()) {
-                    c = ite.next();
+                Iterator<Connection> it = new HashSet<>(serverService.getServerSet()).iterator();
+                while (it.hasNext()) {
+                    c = it.next();
                     testConnection(c);
                 }
-                //Thread.sleep(TIMEOUT);
             }
         } catch (IOException ex) {
             System.out.println("CAIU!");
+            serverService.getServerSet().remove(c);
+            serverService.getServerIPSet().remove(c.getIp() + ":" + c.getPort());
         }
     }
 
@@ -44,7 +43,7 @@ public class AreYouStillAlive implements Runnable {
         message.setSrc(serverService.getMe());
         message.setData("VOCE AINDA ESTA VIVO?");
         message.setAction(Action.PING);
-        c.send(message, true);
+        c.send(message);
 
         try {
             Thread.sleep(TIMEOUT);
@@ -52,5 +51,4 @@ public class AreYouStillAlive implements Runnable {
             Logger.getLogger(AreYouStillAlive.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 }

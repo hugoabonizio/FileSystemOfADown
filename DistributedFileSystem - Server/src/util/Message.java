@@ -33,9 +33,9 @@ public class Message implements Serializable {
     }
 
     public enum Action {
+
         CONNECT_SERVER, CONNECT_CLIENT, DISCONNECT, READ,
         WRITE, CREATE, DELETE, GET_ATTRIBUTES, SET_ATTRIBUTES,
-        RENAME, MKDIR, RMDIR, READDIR, ERROR, PING, SERVER_LIST,
-        PING_ACK
+        RENAME, MKDIR, RMDIR, READDIR, ERROR, PING, PING_ACK
     }
 }

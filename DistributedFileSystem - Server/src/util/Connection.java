@@ -56,7 +56,7 @@ public class Connection implements Serializable {
     public void setIp(String ip) {
         this.ip = ip;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -87,28 +87,26 @@ public class Connection implements Serializable {
         String ip = dest.split(":")[0];
         int port = new Integer(dest.split(":")[1]);
         try {
-            Socket socket = new Socket(ip, port);
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            out.writeObject(obj);
-            Thread.sleep(200);
-            socket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
+            try (Socket socket = new Socket(ip, port)) {
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                out.writeObject(obj);
+                Thread.sleep(200);
+            }
+        } catch (IOException | InterruptedException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
-    public void send(Message obj) {
+    public void send(Message obj) throws IOException {
         try {
             output.writeObject(obj);
         } catch (IOException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
         }
     }
-    
-    public void send(Message obj, boolean is_ping) throws IOException {
+
+    /*public void send(Message obj, boolean is_ping) throws IOException {
         output.writeObject(obj);
-    }
+    }*/
 }

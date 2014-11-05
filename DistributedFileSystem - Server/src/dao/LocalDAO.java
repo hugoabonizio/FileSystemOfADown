@@ -45,7 +45,7 @@ public class LocalDAO {
         SQLiteStatement statement = connection.prepare(writeQuery);
         statement.bind(1, file.getBody());
         statement.bind(2, file.getFsize());
-        statement.bind(3, file.getUpdated_at().toString());
+        statement.bind(3, file.getUpdated_at());
         statement.bind(4, file.getId());
         statement.step();
     }
@@ -54,13 +54,13 @@ public class LocalDAO {
         SQLiteStatement statement = connection.prepare(createQuery);
         statement.bind(1, file.getFname());
         statement.bind(2, file.getPath());
-        statement.bind(3, file.getIs_dir().toString());
+        statement.bind(3, file.getIs_dir());
         statement.bind(4, file.getBody());
         statement.bind(5, file.getFsize());
         statement.bind(6, file.getFtype());
-        statement.bind(7, file.getCreated_at().toString());
-        statement.bind(8, file.getRead_at().toString());
-        statement.bind(9, file.getUpdated_at().toString());
+        statement.bind(7, file.getCreated_at());
+        statement.bind(8, file.getRead_at());
+        statement.bind(9, file.getUpdated_at());
         statement.bind(10, file.getOwner());
         if (statement.step()) {
             return (Integer) statement.columnValue(0);
@@ -109,7 +109,7 @@ public class LocalDAO {
     public void rename(Local file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(renameQuery);
         statement.bind(1, file.getFname());
-        statement.bind(2, file.getUpdated_at().toString());
+        statement.bind(2, file.getUpdated_at());
         statement.bind(3, file.getId());
         statement.step();
     }
@@ -118,11 +118,11 @@ public class LocalDAO {
         SQLiteStatement statement = connection.prepare(mkdirQuery);
         statement.bind(1, file.getFname());
         statement.bind(2, file.getPath());
-        statement.bind(3, file.getIs_dir().toString());
+        statement.bind(3, file.getIs_dir());
         statement.bind(4, file.getFsize());
-        statement.bind(5, file.getCreated_at().toString());
-        statement.bind(6, file.getRead_at().toString());
-        statement.bind(7, file.getUpdated_at().toString());
+        statement.bind(5, file.getCreated_at());
+        statement.bind(6, file.getRead_at());
+        statement.bind(7, file.getUpdated_at());
         statement.bind(8, file.getOwner());
         if (statement.step()) {
             return (Integer) statement.columnValue(0);
@@ -164,13 +164,13 @@ public class LocalDAO {
 
     private void updateRead_at(Local file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(updateRead_atQuery);
-        statement.bind(1, file.getRead_at().toString());
+        statement.bind(1, file.getRead_at());
         statement.bind(2, file.getFname());
         statement.bind(3, file.getPath());
         statement.bind(4, file.getOwner());
         statement.step();
     }
-    
+
     public List<Local> all() throws SQLiteException {
         List<Local> fileList = new ArrayList<>();
 

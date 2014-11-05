@@ -3,9 +3,7 @@ package service;
 import com.almworks.sqlite4java.SQLiteException;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
@@ -15,7 +13,6 @@ import javax.swing.JOptionPane;
 public class Server {
 
     public static void main(String[] args) throws SQLiteException {
-
         Logger.getLogger("com.almworks.sqlite4java").setLevel(Level.OFF);
         /* SQLiteConnection session_files = new SQLiteConnection(new File("database/temporary.db"));
          SQLiteConnection local_files = new SQLiteConnection(new File("database/local_files.db"));
