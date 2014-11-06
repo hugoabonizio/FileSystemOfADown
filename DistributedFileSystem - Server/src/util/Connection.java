@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Connection implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     private ObjectOutputStream output;
     private ObjectInputStream input;
