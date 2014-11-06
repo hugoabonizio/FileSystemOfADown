@@ -76,6 +76,8 @@ public class ListenerSocket implements Runnable {
                     for (Local f : (List<Local>) message.getData()) {
                         tempDAO.create(f, message.getSrc());
                     }
+                    
+                    // enviar a temporary pro servidor que acabou de conectar
 
                     /*
                      Message sendServers = new Message();
