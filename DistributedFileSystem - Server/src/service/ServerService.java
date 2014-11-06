@@ -3,12 +3,15 @@ package service;
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import dao.LocalDAO;
+import dao.TemporaryDAO;
+import entity.Local;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
@@ -54,11 +57,22 @@ public class ServerService {
 
             Message message = new Message();
             try {
-                SQLiteConnection tmpConnection = new SQLiteConnection(new java.io.File("database/local.db"));
-                tmpConnection.open(true);
+                SQLiteConnection tempConnection = new SQLiteConnection(new java.io.File("database/temporary.db"));
+                tempConnection.open(true);
+                tempConnection.setBusyTimeout(10000);
+                TemporaryDAO tempDAO = new TemporaryDAO(tempConnection);
+                
+                SQLiteConnection localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
+                localConnection.open(true);
+                LocalDAO localDAO = new LocalDAO(localConnection);
+                
+                List<Local> fileList = localDAO.all();
+                for (Local file : fileList) {
+                    tempDAO.create(file, me);
+                }
 
                 message.setSrc(me);
-                message.setData((new LocalDAO(tmpConnection)).all());
+                message.setData(fileList);
                 message.setAction(Message.Action.CONNECT_SERVER);
                 connection.send(message);
             } catch (SQLiteException ex) {

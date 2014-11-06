@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import service.ClientService;
-import util.Connection;
 import util.Message;
 import util.Message.Action;
 

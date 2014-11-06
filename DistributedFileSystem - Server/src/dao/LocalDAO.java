@@ -21,6 +21,7 @@ public class LocalDAO {
     private static final String readdirQuery = "SELECT * FROM files WHERE path = ? AND owner = ?;";
     private static final String updateRead_atQuery = "UPDATE files SET read_at = ? WHERE fname = ? AND path = ? AND owner = ?;";
     private static final String allQuery = "SELECT * FROM files;";
+    private static final String deleteFolderQuery = "DELETE FROM files WHERE path LIKE ? AND owner = ?";
 
     public LocalDAO(SQLiteConnection connection) {
         this.connection = connection;
@@ -193,5 +194,12 @@ public class LocalDAO {
         }
 
         return fileList;
+    }
+
+    public void deleteFolder(Local file) throws SQLiteException {
+        SQLiteStatement statement = connection.prepare(deleteFolderQuery);
+        statement.bind(1, file.getPath());
+        statement.bind(2, file.getOwner());
+        statement.step();
     }
 }

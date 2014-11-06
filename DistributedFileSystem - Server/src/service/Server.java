@@ -1,6 +1,8 @@
 package service;
 
+import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
+import dao.TemporaryDAO;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.HashSet;
@@ -14,7 +16,7 @@ public class Server {
 
     public static void main(String[] args) throws SQLiteException {
         Logger.getLogger("com.almworks.sqlite4java").setLevel(Level.OFF);
-        System.setProperty("sqlite4java.debug","false");
+        System.setProperty("sqlite4java.debug", "false");
         /* SQLiteConnection session_files = new SQLiteConnection(new File("database/temporary.db"));
          SQLiteConnection local_files = new SQLiteConnection(new File("database/local_files.db"));
          session_files.open(true);
@@ -35,6 +37,13 @@ public class Server {
          }
 
          // session_files.dispose();*/
+
+        SQLiteConnection tempConnection = new SQLiteConnection(new java.io.File("database/temporary.db"));
+        tempConnection.open(true);
+        tempConnection.setBusyTimeout(10000);
+        TemporaryDAO tempDAO = new TemporaryDAO(tempConnection);
+        tempDAO.clear();
+
         Set<String> servers = new HashSet<>();
         String input;
         try {

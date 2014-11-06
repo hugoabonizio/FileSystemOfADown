@@ -16,6 +16,10 @@ public class TemporaryDAO {
     private static final String renameQuery = "UPDATE files SET fname = ? WHERE id = ?;";
     private static final String mkdirQuery = "INSERT INTO files (fname, path, is_dir, owner, ip) VALUES (?, ?, ?, ?, ?)"; // RETURNING id";
     private static final String readdirQuery = "SELECT * FROM files WHERE path = ? AND owner = ? GROUP BY fname, path, owner;";
+    private static final String clearQuery = "DELETE FROM files";
+    private static final String allQuery = "SELECT * FROM files";
+    private static final String deleteFolderQuery = "DELETE FROM files WHERE path LIKE ? AND owner = ?";
+    private static final String getIpQuery = "SELECT ip FROM files WHERE fname = ? AND path = ? AND owner = ?";
 
     public TemporaryDAO(SQLiteConnection connection) {
         this.connection = connection;
@@ -92,5 +96,50 @@ public class TemporaryDAO {
         }
 
         return fileList;
+    }
+    
+    public void clear() throws SQLiteException {
+        SQLiteStatement statement = connection.prepare(clearQuery);
+        statement.step();
+    }
+    
+    public List<Temporary> all() throws SQLiteException {
+        List<Temporary> fileList = new ArrayList<>();
+
+        SQLiteStatement statement = connection.prepare(allQuery);
+        while (statement.step()) {
+            Temporary file = new Temporary();
+            file.setId((Integer) statement.columnValue(0));
+            file.setFname((String) statement.columnValue(1));
+            file.setPath((String) statement.columnValue(2));
+            file.setIs_dir(Boolean.valueOf((String) statement.columnValue(3)));
+            file.setIp((String) statement.columnValue(4));
+            file.setOwner((String) statement.columnValue(5));
+
+            fileList.add(file);
+        }
+
+        return fileList;
+    }
+    
+    public void deleteFolder(Local file) throws SQLiteException {
+        SQLiteStatement statement = connection.prepare(deleteFolderQuery);
+        statement.bind(1, file.getPath());
+        statement.bind(2, file.getOwner());
+        statement.step();
+    }
+    
+    public List<String> getIp(Local f) throws SQLiteException {
+        List<String> ipList = new ArrayList<>();
+
+        SQLiteStatement statement = connection.prepare(getIpQuery);
+        statement.bind(1, f.getFname());
+        statement.bind(2, f.getPath());
+        statement.bind(3, f.getOwner());
+        while (statement.step()) {
+            ipList.add((String) statement.columnValue(4));
+        }
+
+        return ipList;
     }
 }

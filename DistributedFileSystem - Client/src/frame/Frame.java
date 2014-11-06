@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -470,7 +469,7 @@ public class Frame extends javax.swing.JFrame {
     }
 
     private void requestReaddir() {
-        serverSet = new HashSet<>();
+        //serverSet = new HashSet<>();
         
         Local f = new Local();
         f.setPath(getNavigationBar().getText());
@@ -513,14 +512,14 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        for (String s : getServerSet()) {
-            try {
-                Connection.send(s, m);
-            } catch (IOException ex) {
-                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+        try {
+            Connection.send(address, m);
+        } catch (IOException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //remover row da JTable
+        DefaultTableModel dtm = (DefaultTableModel) this.getTableDirectory().getModel();
+        dtm.removeRow(tableDirectory.getSelectedRow());
     }
 
     private void requestDelete(entity.Local file) {
@@ -529,14 +528,14 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        for (String s : getServerSet()) {
-            try {
-                Connection.send(s, m);
-            } catch (IOException ex) {
-                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+        try {
+            Connection.send(address, m);
+        } catch (IOException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //remover row da JTable
+        DefaultTableModel dtm = (DefaultTableModel) this.getTableDirectory().getModel();
+        dtm.removeRow(tableDirectory.getSelectedRow());
     }
 
     public javax.swing.JButton getBtnNewFile() {
