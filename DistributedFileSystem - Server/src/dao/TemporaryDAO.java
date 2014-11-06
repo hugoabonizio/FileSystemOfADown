@@ -15,7 +15,7 @@ public class TemporaryDAO {
     private static final String deleteQuery = "DELETE FROM files WHERE fname = ? AND path = ? AND owner = ?;";
     private static final String renameQuery = "UPDATE files SET fname = ? WHERE id = ?;";
     private static final String mkdirQuery = "INSERT INTO files (fname, path, is_dir, owner, ip) VALUES (?, ?, ?, ?, ?)"; // RETURNING id";
-    private static final String readdirQuery = "SELECT * FROM files WHERE path = ? AND owner = ?;";
+    private static final String readdirQuery = "SELECT * FROM files WHERE path = ? AND owner = ? GROUP BY fname, path, owner;";
 
     public TemporaryDAO(SQLiteConnection connection) {
         this.connection = connection;

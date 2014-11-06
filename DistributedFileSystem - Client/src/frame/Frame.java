@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import service.ClientService;
 import util.Connection;
 import util.Message;
@@ -369,7 +370,11 @@ public class Frame extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //adicionar row a JTable
+        DefaultTableModel dtm = (DefaultTableModel) this.getTableDirectory().getModel();
+        String[] s = new String[2];
+        s[0] = "Pasta";
+        s[1] = file.getFname();
+        dtm.addRow(s);
     }//GEN-LAST:event_btnNewFolderActionPerformed
 
     private void btnNewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewFileActionPerformed
@@ -398,7 +403,11 @@ public class Frame extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //adicionar row a JTable
+        DefaultTableModel dtm = (DefaultTableModel) this.getTableDirectory().getModel();
+        String[] s = new String[2];
+        s[0] = "Pasta";
+        s[1] = file.getFname();
+        dtm.addRow(s);
     }//GEN-LAST:event_btnNewFileActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

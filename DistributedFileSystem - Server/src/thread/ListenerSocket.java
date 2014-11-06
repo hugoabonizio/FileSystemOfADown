@@ -5,6 +5,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import dao.LocalDAO;
 import dao.TemporaryDAO;
 import entity.Local;
+import entity.Temporary;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -127,6 +128,7 @@ public class ListenerSocket implements Runnable {
                         answer.setAction(Action.CREATE);
                         Connection.send(serverList.get(0), answer);
                     }
+                    throwAction(file, Action.CREATE_TEMP);
 
                     /*answer = new Message();
                      answer.setAction(Action.CREATE);
@@ -179,6 +181,7 @@ public class ListenerSocket implements Runnable {
                         answer.setAction(Action.MKDIR);
                         Connection.send(serverList.get(0), answer);
                     }
+                    throwAction(file, Action.CREATE_TEMP);
 
                     /*answer = new Message();
                      answer.setAction(Action.MKDIR);
@@ -207,6 +210,8 @@ public class ListenerSocket implements Runnable {
                     answer.setData("ESTOU VIVO POR ENQUANTO...");
                     answer.setAction(Action.PING_ACK);
                     Connection.send(message.getSrc(), answer);
+                } else if (action.equals(Action.CREATE_TEMP)) {
+                    tempDAO.create((Local) message.getData(), message.getSrc());
                 }
             }
         } catch (IOException ex) {
@@ -231,5 +236,19 @@ public class ListenerSocket implements Runnable {
         answer.setData(error);
         answer.setSrc(serverService.getMe());
         Connection.send(message.getSrc(), answer);
+    }
+    
+    private void throwAction(Local file, Action action) {
+        Message answer = new Message();
+        answer.setAction(action);
+        answer.setData(file);
+        answer.setSrc(serverService.getMe());
+        for (Connection c : serverService.getServerSet()) {
+            try {
+                c.send(answer);
+            } catch (IOException ex) {
+                Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
