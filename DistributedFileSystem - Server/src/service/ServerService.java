@@ -33,6 +33,24 @@ public class ServerService {
         serverSet = new CopyOnWriteArraySet<>();
 
         listen(mePort);
+        try {
+            SQLiteConnection tempConnection = new SQLiteConnection(new java.io.File("database/temporary.db"));
+            tempConnection.open(true);
+            tempConnection.setBusyTimeout(10000);
+            TemporaryDAO tempDAO = new TemporaryDAO(tempConnection);
+
+            SQLiteConnection localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
+            localConnection.open(true);
+            LocalDAO localDAO = new LocalDAO(localConnection);
+
+            List<Local> fileList = localDAO.all();
+            for (Local file : fileList) {
+                tempDAO.create(file, me);
+            }
+        } catch (SQLiteException ex) {
+            Logger.getLogger(ServerService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         for (String s : servers) {
             connectToServer(s);
         }
@@ -57,22 +75,12 @@ public class ServerService {
 
             Message message = new Message();
             try {
-                SQLiteConnection tempConnection = new SQLiteConnection(new java.io.File("database/temporary.db"));
-                tempConnection.open(true);
-                tempConnection.setBusyTimeout(10000);
-                TemporaryDAO tempDAO = new TemporaryDAO(tempConnection);
-                
                 SQLiteConnection localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
                 localConnection.open(true);
                 LocalDAO localDAO = new LocalDAO(localConnection);
-                
-                List<Local> fileList = localDAO.all();
-                for (Local file : fileList) {
-                    tempDAO.create(file, me);
-                }
 
                 message.setSrc(me);
-                message.setData(fileList);
+                message.setData(localDAO.all());
                 message.setAction(Message.Action.CONNECT_SERVER);
                 connection.send(message);
             } catch (SQLiteException ex) {
