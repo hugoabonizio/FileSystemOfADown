@@ -35,7 +35,7 @@ public class LocalDAO {
         statement.bind(2, file.getPath());
         statement.bind(3, file.getOwner());
         if (statement.step()) {
-            body = (String) statement.columnValue(4);
+            body = (String) statement.columnValue(0);
         }
         updateRead_at(file);
 
@@ -87,13 +87,13 @@ public class LocalDAO {
         if (statement.step()) {
             file = new Local();
             file.setId((Integer) statement.columnValue(0));
-            file.setIs_dir((Boolean) statement.columnValue(3));
-            file.setFsize((Integer) statement.columnValue(5));
-            file.setFtype((String) statement.columnValue(6));
-            file.setCreated_at((String) statement.columnValue(7));
-            file.setRead_at((String) statement.columnValue(8));
-            file.setUpdated_at((String) statement.columnValue(9));
-            file.setOwner((String) statement.columnValue(10));
+            file.setIs_dir((Boolean) statement.columnValue(1));
+            file.setFsize((Integer) statement.columnValue(2));
+            file.setFtype((String) statement.columnValue(3));
+            file.setCreated_at((String) statement.columnValue(4));
+            file.setRead_at((String) statement.columnValue(5));
+            file.setUpdated_at((String) statement.columnValue(6));
+            file.setOwner((String) statement.columnValue(7));
         }
         updateRead_at(arg);
 

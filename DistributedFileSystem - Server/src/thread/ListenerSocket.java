@@ -129,7 +129,7 @@ public class ListenerSocket implements Runnable {
                     long seed = System.nanoTime();
                     Collections.shuffle(serverList, new Random(seed));
 
-                    if (!message.getSrc().equals("SERVER")) {
+                    if (!message.getSrc().equals("SERVER") && !serverList.isEmpty()) {
                         answer = new Message();
                         answer.setSrc("SERVER");
                         answer.setData(file);
@@ -146,10 +146,12 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.DELETE)) {
                     Local file = (Local) message.getData();
                     if (message.getSrc().equals("SERVER")) {
-                        localDAO.rmdir(file);
-                        tempDAO.delete(file);
+                        if (!serverService.getServerSet().isEmpty()) {
+                            localDAO.rmdir(file);
+                            tempDAO.delete(file);
 
-                        throwAction(file, Action.DELETE_TEMP);
+                            throwAction(file, Action.DELETE_TEMP);
+                        }
                     } else {
                         throwFileOperation(file, message.getAction(), tempDAO.getIp(file));
                     }
@@ -191,7 +193,7 @@ public class ListenerSocket implements Runnable {
                     long seed = System.nanoTime();
                     Collections.shuffle(serverList, new Random(seed));
 
-                    if (!message.getSrc().equals("SERVER")) {
+                    if (!message.getSrc().equals("SERVER") && !serverList.isEmpty()) {
                         answer = new Message();
                         answer.setSrc("SERVER");
                         answer.setData(file);
@@ -208,14 +210,16 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.RMDIR)) {
                     Local file = (Local) message.getData();
                     if (message.getSrc().equals("SERVER")) {
-                        localDAO.rmdir(file);
-                        tempDAO.delete(file);
+                        if (!serverService.getServerSet().isEmpty()) {
+                            localDAO.rmdir(file);
+                            tempDAO.delete(file);
 
-                        file.setPath(file.getPath() + file.getFname() + "/%");
-                        localDAO.deleteFolder(file);
-                        tempDAO.deleteFolder(file);
+                            file.setPath(file.getPath() + file.getFname() + "/%");
+                            localDAO.deleteFolder(file);
+                            tempDAO.deleteFolder(file);
 
-                        throwAction(file, Action.DELETE_TEMP);
+                            throwAction(file, Action.DELETE_TEMP);
+                        }
                     } else {
                         throwFileOperation(file, message.getAction(), tempDAO.getIp(file));
                     }
@@ -251,7 +255,7 @@ public class ListenerSocket implements Runnable {
                 }
             }
         } catch (IOException ex) {
-            //Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException | SQLiteException ex) {
             System.out.println(ex.getMessage());
             sendErrorAnswer(message, ex.getMessage());

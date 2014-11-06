@@ -137,7 +137,7 @@ public class TemporaryDAO {
         statement.bind(2, f.getPath());
         statement.bind(3, f.getOwner());
         while (statement.step()) {
-            ipList.add((String) statement.columnValue(4));
+            ipList.add((String) statement.columnValue(0));
         }
 
         return ipList;

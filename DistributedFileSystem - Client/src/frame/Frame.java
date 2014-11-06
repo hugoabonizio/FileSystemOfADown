@@ -404,7 +404,7 @@ public class Frame extends javax.swing.JFrame {
         }
         DefaultTableModel dtm = (DefaultTableModel) this.getTableDirectory().getModel();
         String[] s = new String[2];
-        s[0] = "Pasta";
+        s[0] = "Arquivo";
         s[1] = file.getFname();
         dtm.addRow(s);
     }//GEN-LAST:event_btnNewFileActionPerformed
