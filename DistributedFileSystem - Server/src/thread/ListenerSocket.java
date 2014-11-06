@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.ServerService;
@@ -111,11 +114,25 @@ public class ListenerSocket implements Runnable {
                     Connection.send(message.getSrc(), answer);
                 } else if (action.equals(Action.CREATE)) {
                     Local file = (Local) message.getData();
-                    answer = new Message();
-                    answer.setAction(Action.CREATE);
-                    answer.setData(localDAO.create(file));
-                    answer.setSrc(serverService.getMe());
-                    Connection.send(message.getSrc(), answer);
+                    localDAO.create(file);
+
+                    List<String> serverList = new ArrayList<>(serverService.getServerIPSet());
+                    long seed = System.nanoTime();
+                    Collections.shuffle(serverList, new Random(seed));
+
+                    if (!message.getSrc().equals("SERVER")) {
+                        answer = new Message();
+                        answer.setSrc("SERVER");
+                        answer.setData(file);
+                        answer.setAction(Action.CREATE);
+                        Connection.send(serverList.get(0), answer);
+                    }
+
+                    /*answer = new Message();
+                     answer.setAction(Action.CREATE);
+                     answer.setData(localDAO.create(file));
+                     answer.setSrc(serverService.getMe());
+                     Connection.send(message.getSrc(), answer);*/
                 } else if (action.equals(Action.DELETE)) {
                     Local file = (Local) message.getData();
                     localDAO.delete(file);
@@ -149,11 +166,25 @@ public class ListenerSocket implements Runnable {
                     Connection.send(message.getSrc(), answer);
                 } else if (action.equals(Action.MKDIR)) {
                     Local file = (Local) message.getData();
-                    answer = new Message();
-                    answer.setAction(Action.MKDIR);
-                    answer.setData(localDAO.mkdir(file));
-                    answer.setSrc(serverService.getMe());
-                    Connection.send(message.getSrc(), answer);
+                    localDAO.mkdir(file);
+
+                    List<String> serverList = new ArrayList<>(serverService.getServerIPSet());
+                    long seed = System.nanoTime();
+                    Collections.shuffle(serverList, new Random(seed));
+
+                    if (!message.getSrc().equals("SERVER")) {
+                        answer = new Message();
+                        answer.setSrc("SERVER");
+                        answer.setData(file);
+                        answer.setAction(Action.MKDIR);
+                        Connection.send(serverList.get(0), answer);
+                    }
+
+                    /*answer = new Message();
+                     answer.setAction(Action.MKDIR);
+                     answer.setData(localDAO.mkdir(file));
+                     answer.setSrc(serverService.getMe());
+                     Connection.send(message.getSrc(), answer);*/
                 } else if (action.equals(Action.RMDIR)) {
                     Local file = (Local) message.getData();
                     localDAO.rmdir(file);

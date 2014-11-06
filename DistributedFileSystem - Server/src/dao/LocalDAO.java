@@ -12,12 +12,12 @@ public class LocalDAO {
     private final SQLiteConnection connection;
     private static final String readQuery = "SELECT body FROM files WHERE fname = ? AND path = ? AND owner = ?;";
     private static final String writeQuery = "UPDATE files SET body = ?, fsize = ?, updated_at = ? WHERE id = ?;";
-    private static final String createQuery = "INSERT INTO files (fname, path, is_dir, body, fsize, ftype, created_at, read_at, updated_at, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id;";
+    private static final String createQuery = "INSERT INTO files (fname, path, is_dir, body, fsize, ftype, created_at, read_at, updated_at, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String deleteQuery = "DELETE FROM files WHERE fname = ? AND path = ? AND owner = ?;";
     private static final String getAttributesQuery = "SELECT id, is_dir, fsize, ftype, created_at, read_at, updated_at, owner FROM files WHERE fname = ? AND path = ? AND owner = ?;";
     //private static final String setAttributesQuery = "UPDATE file SET owner = ?, updated_at = ? WHERE id = ?;";
     private static final String renameQuery = "UPDATE files SET fname = ?, updated_at = ? WHERE id = ?;";
-    private static final String mkdirQuery = "INSERT INTO files (fname, path, is_dir, fsize, created_at, read_at, updated_at, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+    private static final String mkdirQuery = "INSERT INTO files (fname, path, is_dir, fsize, created_at, read_at, updated_at, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String readdirQuery = "SELECT * FROM files WHERE path = ? AND owner = ?;";
     private static final String updateRead_atQuery = "UPDATE files SET read_at = ? WHERE fname = ? AND path = ? AND owner = ?;";
     private static final String allQuery = "SELECT * FROM files;";

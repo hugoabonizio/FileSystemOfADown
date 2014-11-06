@@ -3,6 +3,7 @@ package frame;
 import entity.Local;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -303,7 +304,7 @@ public class Frame extends javax.swing.JFrame {
         entity.Local file = new entity.Local();
         file.setBody(txtFile.getText());
         file.setFsize(txtFile.getText().length());
-        file.setUpdated_at(Long.toString(data.getTime()));
+        file.setUpdated_at((new Timestamp(data.getTime())).toString());
         file.setId(openedFileId);
 
         Message m = new Message();
@@ -326,7 +327,7 @@ public class Frame extends javax.swing.JFrame {
             Date data = new Date();
             entity.Local file = new entity.Local();
             file.setFname(txtName.getText());
-            file.setUpdated_at(Long.toString(data.getTime()));
+            file.setUpdated_at((new Timestamp(data.getTime())).toString());
             file.setId(openedFileId);
 
             Message m = new Message();
@@ -352,10 +353,10 @@ public class Frame extends javax.swing.JFrame {
         file.setPath(navigationBar.getText());
         file.setIs_dir(true);
         file.setFsize(0);
-        file.setCreated_at(Long.toString(data.getTime()));
-        file.setRead_at(Long.toString(data.getTime()));
-        file.setUpdated_at(Long.toString(data.getTime()));
-        file.setOwner(clientService.getMe());
+        file.setCreated_at((new Timestamp(data.getTime())).toString());
+        file.setRead_at((new Timestamp(data.getTime())).toString());
+        file.setUpdated_at((new Timestamp(data.getTime())).toString());
+        file.setOwner(clientService.getOwner());
 
         Message m = new Message();
         m.setAction(Action.MKDIR);
@@ -381,10 +382,10 @@ public class Frame extends javax.swing.JFrame {
         file.setBody("");
         file.setFsize(0);
         file.setFtype(".txt");
-        file.setCreated_at(Long.toString(data.getTime()));
-        file.setRead_at(Long.toString(data.getTime()));
-        file.setUpdated_at(Long.toString(data.getTime()));
-        file.setOwner(clientService.getMe());
+        file.setCreated_at((new Timestamp(data.getTime())).toString());
+        file.setRead_at((new Timestamp(data.getTime())).toString());
+        file.setUpdated_at((new Timestamp(data.getTime())).toString());
+        file.setOwner(clientService.getOwner());
 
         Message m = new Message();
         m.setAction(Action.CREATE);
@@ -439,7 +440,7 @@ public class Frame extends javax.swing.JFrame {
             entity.Local file = new entity.Local();
             file.setFname((String) getTableDirectory().getValueAt(row, 1));
             file.setPath(getNavigationBar().getText());
-            file.setRead_at(Long.toString(data.getTime()));
+            file.setRead_at((new Timestamp(data.getTime())).toString());
             file.setOwner(clientService.getOwner());
 
             requestRead(file);
