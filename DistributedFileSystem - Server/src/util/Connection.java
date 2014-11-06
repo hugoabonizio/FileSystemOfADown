@@ -89,11 +89,11 @@ public class Connection implements Serializable {
         String ip = dest.split(":")[0];
         int port = new Integer(dest.split(":")[1]);
         try {
-            try (Socket socket = new Socket(ip, port)) {
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                out.writeObject(obj);
-                Thread.sleep(200);
-            }
+            Socket socket = new Socket(ip, port);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(obj);
+            Thread.sleep(200);
+            socket.close();
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }

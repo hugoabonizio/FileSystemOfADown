@@ -95,7 +95,7 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.CONNECT_CLIENT)) {
                     answer = new Message();
                     answer.setAction(Action.CONNECT_CLIENT);
-                    answer.setData(serverService.getServerSet());
+                    answer.setData(serverService.getServerIPSet());
                     answer.setSrc(serverService.getMe());
                     Connection.send(message.getSrc(), answer);
                 } else if (action.equals(Action.DISCONNECT)) {

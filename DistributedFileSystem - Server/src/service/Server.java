@@ -14,6 +14,7 @@ public class Server {
 
     public static void main(String[] args) throws SQLiteException {
         Logger.getLogger("com.almworks.sqlite4java").setLevel(Level.OFF);
+        System.setProperty("sqlite4java.debug","false");
         /* SQLiteConnection session_files = new SQLiteConnection(new File("database/temporary.db"));
          SQLiteConnection local_files = new SQLiteConnection(new File("database/local_files.db"));
          session_files.open(true);

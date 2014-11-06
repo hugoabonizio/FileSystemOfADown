@@ -26,9 +26,9 @@ public class ClientService {
     private String me;
     private ServerSocket meSS;
     private Connection server;
-    private Set<Connection> other_servers;
+    private Set<String> other_servers;
     //public long lastPING = System.currentTimeMillis();
-
+    
     public ClientService(Frame frame, String owner, String serverAddress, int mePort) {
         this.frame = frame;
         this.owner = owner;
@@ -112,11 +112,11 @@ public class ClientService {
         this.frame = frame;
     }
 
-    public Set<Connection> getOther_servers() {
+    public Set<String> getOther_servers() {
         return other_servers;
     }
 
-    public void setOther_servers(Set<Connection> other_servers) {
+    public void setOther_servers(Set<String> other_servers) {
         this.other_servers = other_servers;
     }
 

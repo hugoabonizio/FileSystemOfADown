@@ -39,7 +39,10 @@ public class ClientThread implements Runnable {
             }
 
             if (action.equals(Action.CONNECT_CLIENT)) {
-                clientService.setOther_servers((Set<Connection>) message.getData());
+                clientService.setOther_servers((Set<String>) message.getData());
+                /*for (String serv: clientService.getOther_servers()) {;
+                    System.out.println("server: " + serv);
+                }*/
             } else if (action.equals(Action.READ)) {
                 frame.getTxtFile().setEnabled(true);
                 frame.getBtnSave().setEnabled(true);
