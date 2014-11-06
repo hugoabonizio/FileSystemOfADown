@@ -3,6 +3,8 @@ package entity;
 import java.io.Serializable;
 
 public class Temporary implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     private int id;
     private String fname;
