@@ -494,7 +494,12 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        Connection.trySendRequest(getServerSet(), m, false);
+        String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+        try {
+            Connection.send(address, m);
+        } catch (IOException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void requestGetAttributes(entity.Local file) {
@@ -503,7 +508,12 @@ public class Frame extends javax.swing.JFrame {
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        Connection.trySendRequest(getServerSet(), m, false);
+        String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+        try {
+            Connection.send(address, m);
+        } catch (IOException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void requestRmdir(entity.Local file) {

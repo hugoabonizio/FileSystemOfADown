@@ -7,6 +7,7 @@ public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String src;
+    private String mainSrc;
     private Object data;
     private Action action;
 
@@ -32,6 +33,14 @@ public class Message implements Serializable {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public String getMainSrc() {
+        return mainSrc;
+    }
+
+    public void setMainSrc(String mainSrc) {
+        this.mainSrc = mainSrc;
     }
 
     public enum Action {

@@ -108,11 +108,22 @@ public class ListenerSocket implements Runnable {
                     //replicar os dados contidos nesse servidor que se desconectou para outro servidor
                 } else if (action.equals(Action.READ)) {
                     Local file = (Local) message.getData();
-                    answer = new Message();
-                    answer.setAction(Action.READ);
-                    answer.setData(localDAO.read(file));
-                    answer.setSrc(serverService.getMe());
-                    Connection.send(message.getSrc(), answer);
+                    if (!message.getSrc().equals("SERVER")) {
+                        answer = new Message();
+                        answer.setAction(Action.READ);
+                        answer.setData(file);
+                        answer.setSrc("SERVER");
+                        answer.setMainSrc(message.getSrc());
+                        
+                        List<String> ipList = tempDAO.getIp(file);
+                        Connection.send(ipList.get(0), answer);
+                    } else {
+                        answer = new Message();
+                        answer.setAction(Action.READ);
+                        answer.setData(localDAO.read(file));
+                        answer.setSrc(serverService.getMe());
+                        Connection.send(message.getMainSrc(), answer);
+                    }
                 } else if (action.equals(Action.WRITE)) {
                     Local file = (Local) message.getData();
                     localDAO.write(file);
@@ -163,11 +174,22 @@ public class ListenerSocket implements Runnable {
                      Connection.send(message.getSrc(), answer);*/
                 } else if (action.equals(Action.GET_ATTRIBUTES)) {
                     Local file = (Local) message.getData();
-                    answer = new Message();
-                    answer.setAction(Action.GET_ATTRIBUTES);
-                    answer.setData(localDAO.getAttributes(file));
-                    answer.setSrc(serverService.getMe());
-                    Connection.send(message.getSrc(), answer);
+                    if (!message.getSrc().equals("SERVER")) {
+                        answer = new Message();
+                        answer.setAction(Action.GET_ATTRIBUTES);
+                        answer.setData(file);
+                        answer.setSrc("SERVER");
+                        answer.setMainSrc(message.getSrc());
+                        
+                        List<String> ipList = tempDAO.getIp(file);
+                        Connection.send(ipList.get(0), answer);
+                    } else {
+                        answer = new Message();
+                        answer.setAction(Action.GET_ATTRIBUTES);
+                        answer.setData(localDAO.getAttributes(file));
+                        answer.setSrc(serverService.getMe());
+                        Connection.send(message.getMainSrc(), answer);
+                    }
                 }/* else if (action.equals(Action.SET_ATTRIBUTES)) {
                  Local file = (Local) message.getData();
                  LocalDAO.setAttributes(file);
