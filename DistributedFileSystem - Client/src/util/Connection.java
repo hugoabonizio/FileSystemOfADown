@@ -4,13 +4,14 @@ import frame.Frame;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Connection {
+public class Connection implements Serializable {
 
     private ObjectOutputStream output;
     private ObjectInputStream input;
