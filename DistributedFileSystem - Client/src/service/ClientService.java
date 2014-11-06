@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import thread.AreYouStillAlive;
@@ -31,7 +32,7 @@ public class ClientService {
     public ClientService(Frame frame, String owner, String serverAddress, int mePort) {
         this.frame = frame;
         this.owner = owner;
-        this.other_servers = new HashSet<>();
+        this.other_servers = new CopyOnWriteArraySet<>();
 
         listen(mePort);
         connectToServer(serverAddress);
