@@ -76,6 +76,7 @@ public class TemporaryDAO {
         SQLiteStatement statement = connection.prepare(deleteQuery);
         statement.bind(1, file.getFname());
         statement.bind(2, file.getPath());
+        statement.bind(3, file.getOwner());
         statement.step();
     }
 
