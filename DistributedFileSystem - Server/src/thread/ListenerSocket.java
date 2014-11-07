@@ -5,6 +5,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import dao.LocalDAO;
 import dao.TemporaryDAO;
 import entity.Local;
+import entity.Temporary;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -79,10 +80,13 @@ public class ListenerSocket implements Runnable {
                         answer.setData(tempDAO.all());
                         answer.setSrc("SERVER");
                         Connection.send(message.getSrc(), answer);
-                    }
-
-                    for (Local f : (List<Local>) message.getData()) {
-                        tempDAO.create(f, message.getSrc());
+                        for (Local f : (List<Local>) message.getData()) {
+                            tempDAO.create(f, message.getSrc());
+                        }
+                    } else {
+                        for (Temporary f : (List<Temporary>) message.getData()) {
+                            tempDAO.create(f);
+                        }
                     }
 
                 } else if (action.equals(Action.CONNECT_CLIENT)) {

@@ -43,6 +43,17 @@ public class TemporaryDAO {
         statement.step();
         return null;
     }
+    
+    public Integer create(Temporary file) throws SQLiteException {
+        SQLiteStatement statement = connection.prepare(createQuery);
+        statement.bind(1, file.getFname());
+        statement.bind(2, file.getPath());
+        statement.bind(3, file.getIs_dir());
+        statement.bind(4, file.getOwner());
+        statement.bind(5, file.getIp());
+        statement.step();
+        return null;
+    }
 
     public void delete(Local file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(deleteQuery);
