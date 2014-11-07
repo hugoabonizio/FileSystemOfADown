@@ -126,11 +126,11 @@ public class ListenerSocket implements Runnable {
                     }
                 } else if (action.equals(Action.WRITE)) {
                     Local file = (Local) message.getData();
-                    localDAO.write(file);
-                    answer = new Message();
-                    answer.setAction(Action.WRITE);
-                    answer.setSrc(serverService.getMe());
-                    Connection.send(message.getSrc(), answer);
+                    if (!message.getSrc().equals("SERVER")) {
+                        throwFileOperation(file, Action.WRITE, tempDAO.getIp(file));
+                    } else {
+                        localDAO.write(file);
+                    }
                 } else if (action.equals(Action.CREATE)) {
                     Local file = (Local) message.getData();
                     localDAO.create(file);
@@ -207,7 +207,7 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.MKDIR)) {
                     Local file = (Local) message.getData();
                     localDAO.mkdir(file);
-                    tempDAO.create(file, serverService.getMe());
+                    tempDAO.mkdir(file, serverService.getMe());
 
                     List<String> serverList = new ArrayList<>(serverService.getServerIPSet());
                     long seed = System.nanoTime();

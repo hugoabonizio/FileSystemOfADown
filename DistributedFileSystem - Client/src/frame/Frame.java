@@ -20,8 +20,8 @@ public class Frame extends javax.swing.JFrame {
 
     private final ClientService clientService;
     private Set<String> serverSet;
-    private Integer openedFileId;
     private static final String FOLDER = "Pasta";
+    private Local openedFile;
     private ForcedListSelectionModel model;
     private Stack<String> backStack, forwardStack;
 
@@ -357,21 +357,22 @@ public class Frame extends javax.swing.JFrame {
         file.setBody(txtFile.getText());
         file.setFsize(txtFile.getText().length());
         file.setUpdated_at((new Timestamp(data.getTime())).toString());
-        file.setId(openedFileId);
+        file.setId(getOpenedFile().getId());
+        file.setFname(getOpenedFile().getFname());
+        file.setPath(getOpenedFile().getPath());
+        file.setOwner(getOpenedFile().getOwner());
 
         Message m = new Message();
         m.setAction(Action.WRITE);
         m.setData(file);
         m.setSrc(clientService.getMe());
 
-        for (String s : getServerSet()) {
-            try {
-                Connection.send(s, m);
-            } catch (IOException ex) {
-                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+        try {
+            Connection.send(address, m);
+        } catch (IOException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //alterar column da JTable
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtNameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNameKeyPressed
@@ -380,7 +381,7 @@ public class Frame extends javax.swing.JFrame {
             entity.Local file = new entity.Local();
             file.setFname(txtName.getText());
             file.setUpdated_at((new Timestamp(data.getTime())).toString());
-            file.setId(openedFileId);
+            file.setId(getOpenedFile().getId());
 
             Message m = new Message();
             m.setAction(Action.RENAME);
@@ -404,7 +405,6 @@ public class Frame extends javax.swing.JFrame {
         file.setFname(JOptionPane.showInputDialog(null, "Nome da pasta: "));
         file.setPath(navigationBar.getText());
         file.setIs_dir(true);
-        file.setFsize(0);
         file.setCreated_at((new Timestamp(data.getTime())).toString());
         file.setRead_at((new Timestamp(data.getTime())).toString());
         file.setUpdated_at((new Timestamp(data.getTime())).toString());
@@ -585,6 +585,7 @@ public class Frame extends javax.swing.JFrame {
         m.setAction(Action.READ);
         m.setData(file);
         m.setSrc(clientService.getMe());
+        m.setMainSrc("CLIENT");
 
         String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
         try {
@@ -599,6 +600,7 @@ public class Frame extends javax.swing.JFrame {
         m.setAction(Action.GET_ATTRIBUTES);
         m.setData(file);
         m.setSrc(clientService.getMe());
+        m.setMainSrc("CLIENT");
 
         String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
         try {
@@ -800,14 +802,6 @@ public class Frame extends javax.swing.JFrame {
         this.txtName = txtName;
     }
 
-    public Integer getOpenedFileId() {
-        return openedFileId;
-    }
-
-    public void setOpenedFileId(Integer openedFileId) {
-        this.openedFileId = openedFileId;
-    }
-
     public ForcedListSelectionModel getModel() {
         return model;
     }
@@ -822,5 +816,13 @@ public class Frame extends javax.swing.JFrame {
 
     public void setServerSet(Set<String> serverSet) {
         this.serverSet = serverSet;
+    }
+
+    public Local getOpenedFile() {
+        return openedFile;
+    }
+
+    public void setOpenedFile(Local openedFile) {
+        this.openedFile = openedFile;
     }
 }

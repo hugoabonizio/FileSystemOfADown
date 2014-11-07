@@ -36,10 +36,11 @@ public class TemporaryDAO {
         statement.bind(3, file.getIs_dir());
         statement.bind(4, file.getOwner());
         statement.bind(5, ip);
-        if (statement.step()) {
+        /*if (statement.step()) {
             return (Integer) statement.columnValue(0);
         }
-        statement.dispose();
+        statement.dispose();*/
+        statement.step();
         return null;
     }
 
@@ -66,9 +67,10 @@ public class TemporaryDAO {
         statement.bind(3, file.getIs_dir());
         statement.bind(4, file.getOwner());
         statement.bind(5, ip);
-        if (statement.step()) {
+        /*if (statement.step()) {
             return (Integer) statement.columnValue(0);
-        }
+        }*/
+        statement.step();
         return null;
     }
 
@@ -90,8 +92,10 @@ public class TemporaryDAO {
             Temporary file = new Temporary();
             file.setId((Integer) statement.columnValue(0));
             file.setFname((String) statement.columnValue(1));
+            file.setPath(f.getPath());
             file.setIs_dir(Boolean.valueOf((String) statement.columnValue(3)));
             file.setIp((String) statement.columnValue(4));
+            file.setOwner(f.getOwner());
 
             fileList.add(file);
         }

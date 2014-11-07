@@ -43,12 +43,14 @@ public class ClientThread implements Runnable {
                     System.out.println("server: " + serv);
                 }*/
             } else if (action.equals(Action.READ)) {
+                Local file = (Local) message.getData();
                 frame.getTxtFile().setEnabled(true);
                 frame.getBtnSave().setEnabled(true);
-                frame.getTxtFile().setText((String) message.getData());
+                frame.getTxtFile().setText(file.getBody());
+                frame.setOpenedFile(file);
             } else if (action.equals(Action.GET_ATTRIBUTES)) {
                 Local file = (Local) message.getData();
-                frame.setOpenedFileId(file.getId());
+                frame.setOpenedFile(file);
                 frame.getTxtName().setEnabled(true);
                 frame.getTxtName().setText(file.getFname());
                 frame.getLabelTipo().setText("Tipo: " + file.getFtype());
