@@ -96,7 +96,7 @@ public class LocalDAO {
             file.setOwner((String) statement.columnValue(7));
             file.setFname(arg.getFname());
         }
-        updateRead_at(arg);
+        //updateRead_at(arg);
 
         return file;
     }

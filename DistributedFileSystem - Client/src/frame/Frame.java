@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -22,6 +23,7 @@ public class Frame extends javax.swing.JFrame {
     private Integer openedFileId;
     private static final String FOLDER = "Pasta";
     private ForcedListSelectionModel model;
+    private Stack<String> backStack, forwardStack;
 
     public Frame(String owner, String serverAddress, int mePort) {
         super("Windows Explorer");
@@ -55,6 +57,8 @@ public class Frame extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         btnNewFolder = new javax.swing.JButton();
         btnNewFile = new javax.swing.JButton();
+        btnVoltar = new javax.swing.JButton();
+        btnAvancar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -198,6 +202,22 @@ public class Frame extends javax.swing.JFrame {
             }
         });
 
+        btnVoltar.setText("Voltar");
+        btnVoltar.setEnabled(false);
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
+
+        btnAvancar.setText("Avançar");
+        btnAvancar.setEnabled(false);
+        btnAvancar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAvancarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -207,6 +227,10 @@ public class Frame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelDetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnVoltar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAvancar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(navigationBar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRefresh))
@@ -232,7 +256,9 @@ public class Frame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRefresh)
-                    .addComponent(navigationBar))
+                    .addComponent(navigationBar)
+                    .addComponent(btnVoltar)
+                    .addComponent(btnAvancar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -273,11 +299,37 @@ public class Frame extends javax.swing.JFrame {
     private void navigationBarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_navigationBarKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             requestReaddir();
+            if (backStack.isEmpty()) {
+                backStack.push(navigationBar.getText());
+            } else {
+                String lastPath = backStack.lastElement();
+                if (!lastPath.equals(navigationBar.getText())) {
+                    backStack.push(navigationBar.getText());
+                    if (backStack.size() == 2) {
+                        btnVoltar.setEnabled(true);
+                    }
+                    forwardStack = new Stack<>();
+                    btnAvancar.setEnabled(false);
+                }
+            }
         }
     }//GEN-LAST:event_navigationBarKeyPressed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
         requestReaddir();
+        if (backStack.isEmpty()) {
+            backStack.push(navigationBar.getText());
+        } else {
+            String lastPath = backStack.lastElement();
+            if (!lastPath.equals(navigationBar.getText())) {
+                backStack.push(navigationBar.getText());
+                if (backStack.size() == 2) {
+                    btnVoltar.setEnabled(true);
+                }
+                forwardStack = new Stack<>();
+                btnAvancar.setEnabled(false);
+            }
+        }
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void tableDirectoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableDirectoryMouseClicked
@@ -409,11 +461,36 @@ public class Frame extends javax.swing.JFrame {
         dtm.addRow(s);
     }//GEN-LAST:event_btnNewFileActionPerformed
 
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        forwardStack.push(backStack.pop());
+        navigationBar.setText(backStack.lastElement());
+
+        btnAvancar.setEnabled(true);
+        if (backStack.size() == 1) {
+            btnVoltar.setEnabled(false);
+        }
+        requestReaddir();
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnAvancarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvancarActionPerformed
+        String path = forwardStack.pop();
+        backStack.push(path);
+        navigationBar.setText(path);
+
+        btnVoltar.setEnabled(true);
+        if (forwardStack.isEmpty()) {
+            btnAvancar.setEnabled(false);
+        }
+        requestReaddir();
+    }//GEN-LAST:event_btnAvancarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAvancar;
     private javax.swing.JButton btnNewFile;
     private javax.swing.JButton btnNewFolder;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -436,6 +513,8 @@ public class Frame extends javax.swing.JFrame {
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setModel(new ForcedListSelectionModel());
         getTableDirectory().setSelectionModel(getModel());
+
+        backStack = new Stack<>();
     }
 
     private void tableDirectoryReadEvt(int row) {
@@ -443,6 +522,19 @@ public class Frame extends javax.swing.JFrame {
             String folder = getTableDirectory().getValueAt(row, 1) + "/";
             getNavigationBar().setText(getNavigationBar().getText() + folder);
             requestReaddir();
+            if (backStack.isEmpty()) {
+                backStack.push(navigationBar.getText());
+            } else {
+                String lastPath = backStack.lastElement();
+                if (!lastPath.equals(navigationBar.getText())) {
+                    backStack.push(navigationBar.getText());
+                    if (backStack.size() == 2) {
+                        btnVoltar.setEnabled(true);
+                    }
+                    forwardStack = new Stack<>();
+                    btnAvancar.setEnabled(false);
+                }
+            }
         } else {
             Date data = new Date();
             entity.Local file = new entity.Local();
@@ -470,11 +562,11 @@ public class Frame extends javax.swing.JFrame {
 
     private void requestReaddir() {
         //serverSet = new HashSet<>();
-        
+
         Local f = new Local();
         f.setPath(getNavigationBar().getText());
         f.setOwner(clientService.getOwner());
-        
+
         Message m = new Message();
         m.setAction(Action.READDIR);
         m.setData(f);
