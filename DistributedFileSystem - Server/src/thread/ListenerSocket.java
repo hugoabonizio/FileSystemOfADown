@@ -58,34 +58,33 @@ public class ListenerSocket implements Runnable {
                 }
 
                 if (action.equals(Action.CONNECT_SERVER)) {
-                    String ip = message.getSrc().split(":")[0];
-                    int port = Integer.parseInt(message.getSrc().split(":")[1]);
-
-                    Socket socket = new Socket(ip, port);
-                    Connection c = new Connection();
-                    c.setOutput(new ObjectOutputStream(socket.getOutputStream()));
-                    c.setInput(new ObjectInputStream(socket.getInputStream()));
-                    c.setIp(ip);
-                    c.setPort(port);
-                    c.setSocket(socket);
-
-                    serverService.getServerSet().add(c);
-                    serverService.getServerIPSet().add(message.getSrc());
-
-                    // enviar a temporary pro servidor que acabou de conectar
                     if (!message.getSrc().equals("SERVER")) {
+                        String ip = message.getSrc().split(":")[0];
+                        int port = Integer.parseInt(message.getSrc().split(":")[1]);
+
+                        Socket socket = new Socket(ip, port);
+                        Connection c = new Connection();
+                        c.setOutput(new ObjectOutputStream(socket.getOutputStream()));
+                        c.setInput(new ObjectInputStream(socket.getInputStream()));
+                        c.setIp(ip);
+                        c.setPort(port);
+                        c.setSocket(socket);
+
+                        serverService.getServerSet().add(c);
+                        serverService.getServerIPSet().add(message.getSrc());
+
+                        // enviar a temporary pro servidor que acabou de conectar
                         answer = new Message();
                         answer.setAction(Action.CONNECT_SERVER);
                         answer.setData(tempDAO.all());
                         answer.setSrc("SERVER");
                         Connection.send(message.getSrc(), answer);
                     }
-                    
+
                     for (Local f : (List<Local>) message.getData()) {
                         tempDAO.create(f, message.getSrc());
                     }
 
-                    
                 } else if (action.equals(Action.CONNECT_CLIENT)) {
                     answer = new Message();
                     answer.setAction(Action.CONNECT_CLIENT);
@@ -136,10 +135,10 @@ public class ListenerSocket implements Runnable {
                         answer.setAction(Action.CREATE);
                         // replicando para um servidor aleatório
                         Connection.send(serverList.get(0), answer);
-                        
+
                         // cadastrando na tabela temporaria
                         tempDAO.create(file, serverList.get(0));
-                        
+
                         throwAction(file, Action.CREATE_TEMP, serverList.get(0));
                         throwAction(file, Action.CREATE_TEMP);
                     }
@@ -215,10 +214,10 @@ public class ListenerSocket implements Runnable {
                         answer.setAction(Action.MKDIR);
                         // replicando para um servidor aleatório
                         Connection.send(serverList.get(0), answer);
-                        
+
                         // cadastrando na tabela temporaria
                         tempDAO.mkdir(file, serverList.get(0));
-                        
+
                         throwAction(file, Action.CREATE_TEMP, serverList.get(0));
                         throwAction(file, Action.CREATE_TEMP);
                     }
@@ -300,7 +299,7 @@ public class ListenerSocket implements Runnable {
     private void throwAction(Local file, Action action) {
         throwAction(file, action, serverService.getMe());
     }
-    
+
     private void throwAction(Local file, Action action, String ip) {
         Message answer = new Message();
         answer.setAction(action);
