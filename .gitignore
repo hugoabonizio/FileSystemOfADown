@@ -2,3 +2,4 @@
 /DistributedFileSystem - Client/build/
 /DistributedFileSystem - Server/dist/
 /DistributedFileSystem - Client/dist/
+*.db
