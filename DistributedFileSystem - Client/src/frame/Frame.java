@@ -349,6 +349,9 @@ public class Frame extends javax.swing.JFrame {
                 tableDirectoryDeleteEvt(row);
             }
         }
+        if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE && backStack.size() > 1) {
+            back();
+        }
     }//GEN-LAST:event_tableDirectoryKeyPressed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
@@ -379,7 +382,7 @@ public class Frame extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             Date data = new Date();
             entity.Local file = new entity.Local();
-            file.setFname(txtName.getText());
+            file.setNew_fname(txtName.getText());
             file.setUpdated_at((new Timestamp(data.getTime())).toString());
             file.setId(getOpenedFile().getId());
             file.setFname(getOpenedFile().getFname());
@@ -397,7 +400,7 @@ public class Frame extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
             }
-            requestReaddir();
+            //alterar jtable
         }
     }//GEN-LAST:event_txtNameKeyPressed
 
@@ -465,6 +468,10 @@ public class Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNewFileActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        back();
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void back() {
         forwardStack.push(backStack.pop());
         navigationBar.setText(backStack.lastElement());
 
@@ -473,7 +480,7 @@ public class Frame extends javax.swing.JFrame {
             btnVoltar.setEnabled(false);
         }
         requestReaddir();
-    }//GEN-LAST:event_btnVoltarActionPerformed
+    }
 
     private void btnAvancarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvancarActionPerformed
         String path = forwardStack.pop();

@@ -13,7 +13,7 @@ public class TemporaryDAO {
     private final SQLiteConnection connection;
     private static final String createQuery = "INSERT OR REPLACE INTO files (fname, path, is_dir, owner, ip) VALUES (?, ?, ?, ?, ?)"; // RETURNING id;";
     private static final String deleteQuery = "DELETE FROM files WHERE fname = ? AND path = ? AND owner = ?;";
-    private static final String renameQuery = "UPDATE files SET fname = ? WHERE id = ?;";
+    private static final String renameQuery = "UPDATE files SET fname = ? WHERE fname = ? AND path = ? AND owner = ?;";
     private static final String mkdirQuery = "INSERT INTO files (fname, path, is_dir, owner, ip) VALUES (?, ?, ?, ?, ?)"; // RETURNING id";
     private static final String readdirQuery = "SELECT * FROM files WHERE path = ? AND owner = ? GROUP BY fname, path, owner;";
     private static final String clearQuery = "DELETE FROM files";
@@ -65,8 +65,10 @@ public class TemporaryDAO {
 
     public void rename(Local file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(renameQuery);
-        statement.bind(1, file.getFname());
-        statement.bind(2, file.getId());
+        statement.bind(1, file.getNew_fname());
+        statement.bind(2, file.getFname());
+        statement.bind(3, file.getPath());
+        statement.bind(4, file.getOwner());
         statement.step();
     }
 

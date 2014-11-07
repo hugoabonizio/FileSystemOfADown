@@ -56,8 +56,9 @@ public class ClientService {
             message.setSrc(me);
             message.setAction(Action.CONNECT_CLIENT);
             server.send(message);
-        } catch (IOException ex) {
-            Logger.getLogger(ClientService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException | NumberFormatException ex) {
+            //Logger.getLogger(ClientService.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(0);
         }
     }
 

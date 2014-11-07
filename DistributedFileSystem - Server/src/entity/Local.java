@@ -17,6 +17,7 @@ public class Local implements Serializable {
     private String read_at;
     private String updated_at;
     private String owner;
+    private String new_fname;
 
     public String getPath() {
         return path;
@@ -108,5 +109,13 @@ public class Local implements Serializable {
 
     public void setRead_at(String read_at) {
         this.read_at = read_at;
+    }
+
+    public String getNew_fname() {
+        return new_fname;
+    }
+
+    public void setNew_fname(String new_fname) {
+        this.new_fname = new_fname;
     }
 }

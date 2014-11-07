@@ -200,6 +200,7 @@ public class ListenerSocket implements Runnable {
                         throwFileOperation(file, Action.RENAME, tempDAO.getIp(file));
                     } else {
                         localDAO.rename(file);
+                        tempDAO.rename(file);
                         throwAction(file, Action.RENAME_TEMP);
                     }
                 } else if (action.equals(Action.MKDIR)) {

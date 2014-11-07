@@ -15,6 +15,8 @@ public class Client {
 
         try {
             final String owner = JOptionPane.showInputDialog(null, "Quem é você?");
+            if (owner == null)
+                System.exit(0);
             final String serverAddress = JOptionPane.showInputDialog(null, "Insira IP:Porta do servidor ao qual deseja se conectar", Inet4Address.getLocalHost().getHostAddress() + ":");
             final Random random = new Random();
 
