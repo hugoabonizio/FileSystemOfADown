@@ -94,8 +94,12 @@ public class Connection implements Serializable {
             Socket socket = new Socket(ip, port);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(obj);
+            Thread.sleep(200);
+            socket.close();
         } catch (IOException ex) {
             throw ex;
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

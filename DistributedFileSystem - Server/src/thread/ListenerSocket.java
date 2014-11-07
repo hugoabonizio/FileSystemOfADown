@@ -114,7 +114,7 @@ public class ListenerSocket implements Runnable {
                         answer.setData(file);
                         answer.setSrc("SERVER");
                         answer.setMainSrc(message.getSrc());
-                        
+
                         List<String> ipList = tempDAO.getIp(file);
                         Connection.send(ipList.get(0), answer);
                     } else {
@@ -157,12 +157,10 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.DELETE)) {
                     Local file = (Local) message.getData();
                     if (message.getSrc().equals("SERVER")) {
-                        if (!serverService.getServerSet().isEmpty()) {
-                            localDAO.rmdir(file);
-                            tempDAO.delete(file);
+                        localDAO.delete(file);
+                        tempDAO.delete(file);
 
-                            throwAction(file, Action.DELETE_TEMP);
-                        }
+                        throwAction(file, Action.DELETE_TEMP);
                     } else {
                         throwFileOperation(file, message.getAction(), tempDAO.getIp(file));
                     }
@@ -180,7 +178,7 @@ public class ListenerSocket implements Runnable {
                         answer.setData(file);
                         answer.setSrc("SERVER");
                         answer.setMainSrc(message.getSrc());
-                        
+
                         List<String> ipList = tempDAO.getIp(file);
                         Connection.send(ipList.get(0), answer);
                     } else {
@@ -232,16 +230,14 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.RMDIR)) {
                     Local file = (Local) message.getData();
                     if (message.getSrc().equals("SERVER")) {
-                        if (!serverService.getServerSet().isEmpty()) {
-                            localDAO.rmdir(file);
-                            tempDAO.delete(file);
+                        localDAO.rmdir(file);
+                        tempDAO.rmdir(file);
 
-                            file.setPath(file.getPath() + file.getFname() + "/%");
-                            localDAO.deleteFolder(file);
-                            tempDAO.deleteFolder(file);
+                        file.setPath(file.getPath() + file.getFname() + "/%");
+                        localDAO.deleteFolder(file);
+                        tempDAO.deleteFolder(file);
 
-                            throwAction(file, Action.DELETE_TEMP);
-                        }
+                        throwAction(file, Action.DELETE_TEMP);
                     } else {
                         throwFileOperation(file, message.getAction(), tempDAO.getIp(file));
                     }
