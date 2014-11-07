@@ -66,8 +66,7 @@ public class TemporaryDAO {
     public void rename(Local file) throws SQLiteException {
         SQLiteStatement statement = connection.prepare(renameQuery);
         statement.bind(1, file.getFname());
-        statement.bind(2, file.getUpdated_at());
-        statement.bind(3, file.getId());
+        statement.bind(2, file.getId());
         statement.step();
     }
 

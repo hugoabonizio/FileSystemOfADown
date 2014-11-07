@@ -200,6 +200,7 @@ public class ListenerSocket implements Runnable {
                         throwFileOperation(file, Action.RENAME, tempDAO.getIp(file));
                     } else {
                         localDAO.rename(file);
+                        throwAction(file, Action.RENAME_TEMP);
                     }
                 } else if (action.equals(Action.MKDIR)) {
                     Local file = (Local) message.getData();
@@ -273,6 +274,8 @@ public class ListenerSocket implements Runnable {
                         file.setPath(file.getPath() + file.getFname() + "/%");
                         tempDAO.deleteFolder(file);
                     }
+                } else if (action.equals(Action.RENAME_TEMP)) {
+                    tempDAO.rename((Local) message.getData());
                 }
             }
         } catch (IOException ex) {
