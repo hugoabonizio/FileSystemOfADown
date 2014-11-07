@@ -196,12 +196,11 @@ public class ListenerSocket implements Runnable {
                  Connection.send(message.getSrc(), answer);
                  }*/ else if (action.equals(Action.RENAME)) {
                     Local file = (Local) message.getData();
-                    localDAO.rename(file);
-                    answer = new Message();
-                    answer.setAction(Action.RENAME);
-                    answer.setData("Arquivo renomeado com sucesso!");
-                    answer.setSrc(serverService.getMe());
-                    Connection.send(message.getSrc(), answer);
+                    if (!message.getSrc().equals("SERVER")) {
+                        throwFileOperation(file, Action.RENAME, tempDAO.getIp(file));
+                    } else {
+                        localDAO.rename(file);
+                    }
                 } else if (action.equals(Action.MKDIR)) {
                     Local file = (Local) message.getData();
                     localDAO.mkdir(file);

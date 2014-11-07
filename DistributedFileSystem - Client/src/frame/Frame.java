@@ -382,19 +382,22 @@ public class Frame extends javax.swing.JFrame {
             file.setFname(txtName.getText());
             file.setUpdated_at((new Timestamp(data.getTime())).toString());
             file.setId(getOpenedFile().getId());
+            file.setFname(getOpenedFile().getFname());
+            file.setPath(getOpenedFile().getPath());
+            file.setOwner(getOpenedFile().getOwner());
 
             Message m = new Message();
             m.setAction(Action.RENAME);
             m.setData(file);
             m.setSrc(clientService.getMe());
 
-            for (String s : getServerSet()) {
-                try {
-                    Connection.send(s, m);
-                } catch (IOException ex) {
-                    Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            String address = clientService.getServer().getIp() + ":" + clientService.getServer().getPort();
+            try {
+                Connection.send(address, m);
+            } catch (IOException ex) {
+                Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
             }
+            requestReaddir();
         }
     }//GEN-LAST:event_txtNameKeyPressed
 
