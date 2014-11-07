@@ -554,8 +554,10 @@ public class Frame extends javax.swing.JFrame {
         file.setPath(navigationBar.getText());
         file.setOwner(clientService.getOwner());
         if (getTableDirectory().getValueAt(row, 0).equals(FOLDER)) {
+            file.setIs_dir("true");
             requestRmdir(file);
         } else {
+            file.setIs_dir("false");
             requestDelete(file);
         }
     }
