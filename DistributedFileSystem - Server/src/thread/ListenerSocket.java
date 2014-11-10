@@ -126,21 +126,20 @@ public class ListenerSocket implements Runnable {
                     tempDAO.create(file, serverService.getMe());
 
                     List<String> serverList = new ArrayList<>(serverService.getServerIPSet());
-                    long seed = System.nanoTime();
-                    Collections.shuffle(serverList, new Random(seed));
-
+                    String randomServer = randomConnection(serverList);
+                    
                     if (!message.getSrc().equals("SERVER") && !serverList.isEmpty()) {
                         answer = new Message();
                         answer.setSrc("SERVER");
                         answer.setData(file);
                         answer.setAction(Action.CREATE);
                         // replicando para um servidor aleatório
-                        Connection.send(serverList.get(0), answer);
+                        Connection.send(randomServer, answer);
 
                         // cadastrando na tabela temporaria
-                        tempDAO.create(file, serverList.get(0));
+                        tempDAO.create(file, randomServer);
 
-                        throwAction(file, Action.CREATE_TEMP, serverList.get(0));
+                        throwAction(file, Action.CREATE_TEMP, randomServer);
                         throwAction(file, Action.CREATE_TEMP);
                     }
 
@@ -206,8 +205,7 @@ public class ListenerSocket implements Runnable {
                     tempDAO.mkdir(file, serverService.getMe());
 
                     List<String> serverList = new ArrayList<>(serverService.getServerIPSet());
-                    long seed = System.nanoTime();
-                    Collections.shuffle(serverList, new Random(seed));
+                    String randomServer = randomConnection(serverList);
 
                     if (!message.getSrc().equals("SERVER") && !serverList.isEmpty()) {
                         answer = new Message();
@@ -215,12 +213,12 @@ public class ListenerSocket implements Runnable {
                         answer.setData(file);
                         answer.setAction(Action.MKDIR);
                         // replicando para um servidor aleatório
-                        Connection.send(serverList.get(0), answer);
+                        Connection.send(randomServer, answer);
 
                         // cadastrando na tabela temporaria
-                        tempDAO.mkdir(file, serverList.get(0));
+                        tempDAO.mkdir(file, randomServer);
 
-                        throwAction(file, Action.CREATE_TEMP, serverList.get(0));
+                        throwAction(file, Action.CREATE_TEMP, randomServer);
                         throwAction(file, Action.CREATE_TEMP);
                     }
 
@@ -277,7 +275,7 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.SERVER_DOWN)) {
                     List<Temporary> files = tempDAO.serverDown((String) message.getData(), serverService.getMe());
                     Message req;
-                    for (Temporary f: files) {
+                    for (Temporary f : files) {
                         req = new Message();
                         req.setAction(Action.GET_FILE);
                         req.setData(f);
@@ -286,7 +284,7 @@ public class ListenerSocket implements Runnable {
                     }
                     // remover o servidor das temporary
                     tempDAO.deleteByIP((String) message.getData());
-                    
+
                 } else if (action.equals(Action.GET_FILE)) {
                     answer = new Message();
                     answer.setAction(Action.GET_FILE_RESPONSE);
@@ -297,7 +295,7 @@ public class ListenerSocket implements Runnable {
                     Local file = (Local) message.getData();
                     localDAO.create(file);
                     System.out.println("criando " + ((Local) message.getData()).getFname());
-                    
+
                     // notificar novo nó contendo o arquivo
                     tempDAO.create(file, serverService.getMe());
                     throwAction(file, Action.CREATE_TEMP);
@@ -353,5 +351,18 @@ public class ListenerSocket implements Runnable {
         for (String s : ipList) {
             Connection.send(s, answer);
         }
+    }
+
+    private String randomConnection(List<String> list) {
+        int size = list.size();
+        int item = new Random().nextInt(size);
+        int i = 0;
+        for (String obj : list) {
+            if (i == item) {
+                return obj;
+            }
+            i = i + 1;
+        }
+        return null;
     }
 }

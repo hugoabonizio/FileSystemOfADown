@@ -1,8 +1,10 @@
 package thread;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import service.ClientService;
 import util.Connection;
 import util.Message;
@@ -26,6 +28,21 @@ public class AreYouStillAlive implements Runnable {
             }
         } catch (IOException ex) {
             System.out.println("CAIU!");
+            while (!clientService.getOther_servers().isEmpty()) {
+                String newServer = (new ArrayList<>(clientService.getOther_servers())).get(0);
+                try {
+                    clientService.getOther_servers().remove(newServer);
+                    clientService.connectToServer(newServer);
+                    break;
+                } catch (IOException e) {
+                    // proximo
+                }
+            }
+            
+            if (clientService.getOther_servers().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "O servidor que você estava conectado caiu e "
+                        + "não foi possível conectar a outro servidor");
+            }
         }
     }
 

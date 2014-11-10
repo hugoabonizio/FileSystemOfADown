@@ -34,11 +34,15 @@ public class ClientService {
         this.other_servers = new CopyOnWriteArraySet<>();
 
         listen(mePort);
-        connectToServer(serverAddress);
+        try {
+            connectToServer(serverAddress);
+        } catch (IOException ex) {
+            System.exit(0);
+        }
         ping();
     }
 
-    private void connectToServer(String serverAddress) throws NumberFormatException {
+    public void connectToServer(String serverAddress) throws IOException {
         Socket socket;
         try {
             String ip = serverAddress.split(":")[0];
@@ -56,9 +60,11 @@ public class ClientService {
             message.setSrc(me);
             message.setAction(Action.CONNECT_CLIENT);
             server.send(message);
-        } catch (IOException | ArrayIndexOutOfBoundsException | NullPointerException | NumberFormatException ex) {
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException | NumberFormatException ex) {
             //Logger.getLogger(ClientService.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(0);
+        } catch (IOException ex) {
+            throw ex;
         }
     }
 
