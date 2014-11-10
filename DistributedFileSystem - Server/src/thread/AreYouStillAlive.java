@@ -62,7 +62,8 @@ public class AreYouStillAlive implements Runnable {
             try {
                 c.send(answer);
             } catch (IOException ex) {
-                Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("exception no replicate");
+                // Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
