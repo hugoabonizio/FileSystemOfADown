@@ -46,6 +46,7 @@ public class ListenerSocket implements Runnable {
 
             localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
             localConnection.open(true);
+            localConnection.setBusyTimeout(10000);
             localDAO = new LocalDAO(localConnection);
         } catch (SQLiteException ex) {
             Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);

@@ -67,7 +67,11 @@ public class LocalDAO {
         statement.bind(2, file.getPath());
         statement.bind(3, file.getIs_dir());
         statement.bind(4, file.getBody());
-        statement.bind(5, file.getFsize());
+        if (file.getFsize() == null) {
+            statement.bind(5, 0);
+        } else {
+            statement.bind(5, file.getFsize());
+        }
         statement.bind(6, file.getFtype());
         statement.bind(7, file.getCreated_at());
         statement.bind(8, file.getRead_at());

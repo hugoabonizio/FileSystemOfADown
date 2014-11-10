@@ -41,6 +41,7 @@ public class ServerService {
 
             SQLiteConnection localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
             localConnection.open(true);
+            localConnection.setBusyTimeout(10000);
             LocalDAO localDAO = new LocalDAO(localConnection);
 
             List<Local> fileList = localDAO.all();
@@ -77,6 +78,7 @@ public class ServerService {
             try {
                 SQLiteConnection localConnection = new SQLiteConnection(new java.io.File("database/local.db"));
                 localConnection.open(true);
+                localConnection.setBusyTimeout(10000);
                 LocalDAO localDAO = new LocalDAO(localConnection);
 
                 message.setSrc(me);

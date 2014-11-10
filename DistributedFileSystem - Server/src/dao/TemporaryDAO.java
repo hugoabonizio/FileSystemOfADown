@@ -197,8 +197,6 @@ public class TemporaryDAO {
                 file.setIs_dir(Boolean.valueOf((String) statement.columnValue(3)));
                 file.setIp((String) statement.columnValue(4));
                 file.setOwner((String) statement.columnValue(5));
-
-                System.out.println("fname: " + file.getFname());
                 
                 final_list.add(file);
             }
