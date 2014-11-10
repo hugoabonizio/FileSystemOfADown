@@ -277,6 +277,8 @@ public class ListenerSocket implements Runnable {
                     }
                 } else if (action.equals(Action.RENAME_TEMP)) {
                     tempDAO.rename((Local) message.getData());
+                } else if (action.equals(Action.SERVER_DOWN)) {
+                    
                 }
             }
         } catch (IOException ex) {

@@ -33,6 +33,7 @@ public class AreYouStillAlive implements Runnable {
             }
         } catch (IOException ex) {
             System.out.println("CAIU!");
+            //replicate();
             serverService.getServerSet().remove(c);
             serverService.getServerIPSet().remove(c.getIp() + ":" + c.getPort());
         }
@@ -49,6 +50,20 @@ public class AreYouStillAlive implements Runnable {
             Thread.sleep(TIMEOUT);
         } catch (InterruptedException ex) {
             Logger.getLogger(AreYouStillAlive.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void replicate(String serverIp) {
+        Message answer = new Message();
+        answer.setAction(Action.SERVER_DOWN);
+        answer.setData(serverIp);
+        answer.setSrc(serverService.getMe());
+        for (Connection c : serverService.getServerSet()) {
+            try {
+                c.send(answer);
+            } catch (IOException ex) {
+                Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }
