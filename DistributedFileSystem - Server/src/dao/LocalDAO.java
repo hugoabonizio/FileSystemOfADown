@@ -222,6 +222,9 @@ public class LocalDAO {
     public Local readFromTemp(Temporary temp) throws SQLiteException {
         Local file = new Local();
         SQLiteStatement statement = connection.prepare(readFromTempQuery);
+        statement.bind(1, temp.getFname());
+        statement.bind(2, temp.getPath());
+        statement.bind(3, temp.getOwner());
         if (statement.step()) {
             file.setId((Integer) statement.columnValue(0));
             file.setFname((String) statement.columnValue(1));
