@@ -106,7 +106,7 @@ public class Connection implements Serializable {
         try {
             output.writeObject(obj);
         } catch (IOException ex) {
-            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
     }

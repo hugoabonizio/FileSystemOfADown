@@ -66,5 +66,7 @@ public class AreYouStillAlive implements Runnable {
                 // Logger.getLogger(ListenerSocket.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        Connection.send(serverService.getMe(), answer);
     }
 }
