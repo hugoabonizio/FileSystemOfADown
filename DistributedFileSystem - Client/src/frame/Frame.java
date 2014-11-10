@@ -346,7 +346,10 @@ public class Frame extends javax.swing.JFrame {
             if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                 tableDirectoryReadEvt(row);
             } else if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
-                tableDirectoryDeleteEvt(row);
+                int option = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir essa pasta ou arquivo?");
+                if (option == JOptionPane.YES_OPTION) {
+                    tableDirectoryDeleteEvt(row);
+                }
             }
         }
         if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE && backStack.size() > 1) {
@@ -376,6 +379,7 @@ public class Frame extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso!");
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtNameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNameKeyPressed
@@ -401,6 +405,7 @@ public class Frame extends javax.swing.JFrame {
                 Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
             }
             //alterar jtable
+            JOptionPane.showMessageDialog(null, "Arquivo renomeado com sucesso!");
         }
     }//GEN-LAST:event_txtNameKeyPressed
 
