@@ -21,7 +21,7 @@ public class TemporaryDAO {
     private static final String deleteFolderQuery = "DELETE FROM files WHERE path LIKE ? AND owner = ?";
     private static final String getIpQuery = "SELECT ip FROM files WHERE fname = ? AND path = ? AND owner = ?";
     private static final String serverDownQuery = "SELECT * FROM files WHERE ip = ?";
-    private static final String serverDownQuery2 = "SELECT * FROM files WHERE fname = ? AND path = ? AND owner = ? AND ip != ? AND ip != ? GROU BY ip";
+    private static final String serverDownQuery2 = "SELECT * FROM files WHERE fname = ? AND path = ? AND owner = ? AND ip != ? AND ip != ? GROUP BY ip";
     private static final String deleteByIpQuery = "DELETE FROM files WHERE ip = ?";
     
 
