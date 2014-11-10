@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -94,6 +95,8 @@ public class Connection implements Serializable {
             out.writeObject(obj);
             Thread.sleep(200);
             socket.close();
+        } catch (ConnectException ex) {
+            //Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }

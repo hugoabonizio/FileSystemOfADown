@@ -33,9 +33,9 @@ public class AreYouStillAlive implements Runnable {
             }
         } catch (IOException ex) {
             System.out.println("CAIU!");
-            replicate(c.getIp() + ":" + c.getPort());
             serverService.getServerSet().remove(c);
             serverService.getServerIPSet().remove(c.getIp() + ":" + c.getPort());
+            replicate(c.getIp() + ":" + c.getPort());
         }
     }
 
