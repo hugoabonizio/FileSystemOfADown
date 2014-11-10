@@ -95,9 +95,6 @@ public class ListenerSocket implements Runnable {
                     answer.setData(serverService.getServerIPSet());
                     answer.setSrc(serverService.getMe());
                     Connection.send(message.getSrc(), answer);
-                } else if (action.equals(Action.DISCONNECT)) {
-                    serverService.getServerSet().remove((Connection) message.getData());
-                    //replicar os dados contidos nesse servidor que se desconectou para outro servidor
                 } else if (action.equals(Action.READ)) {
                     Local file = (Local) message.getData();
                     if (!message.getMainSrc().equals("SERVER")) {
@@ -288,10 +285,22 @@ public class ListenerSocket implements Runnable {
                         Connection.send(f.getIp(), req);
                     }
                     // remover o servidor das temporary
-                    // remover do set de servidores
+                    tempDAO.deleteByIP((String) message.getData());
                     
                 } else if (action.equals(Action.GET_FILE)) {
+                    answer = new Message();
+                    answer.setAction(Action.GET_FILE_RESPONSE);
+                    answer.setSrc(serverService.getMe());
+                    answer.setData(localDAO.readFromTemp((Temporary) message.getData()));
+                    Connection.send(message.getSrc(), answer);
+                } else if (action.equals(Action.GET_FILE_RESPONSE)) {
+                    Local file = (Local) message.getData();
+                    localDAO.create(file);
+                    System.out.println("criando " + ((Local) message.getData()).getFname());
                     
+                    // notificar novo nó contendo o arquivo
+                    tempDAO.create(file, serverService.getMe());
+                    throwAction(file, Action.CREATE_TEMP);
                 }
             }
         } catch (IOException ex) {

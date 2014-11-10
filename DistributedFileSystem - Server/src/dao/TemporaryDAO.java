@@ -22,6 +22,8 @@ public class TemporaryDAO {
     private static final String getIpQuery = "SELECT ip FROM files WHERE fname = ? AND path = ? AND owner = ?";
     private static final String serverDownQuery = "SELECT * FROM files WHERE ip = ?";
     private static final String serverDownQuery2 = "SELECT * FROM files WHERE fname = ? AND path = ? AND owner = ? AND ip != ? AND ip != ? GROU BY ip";
+    private static final String deleteByIpQuery = "DELETE FROM files WHERE ip = ?";
+    
 
     public TemporaryDAO(SQLiteConnection connection) {
         this.connection = connection;
@@ -202,5 +204,11 @@ public class TemporaryDAO {
             }
         }
         return final_list;
+    }
+    
+    public void deleteByIP(String ip) throws SQLiteException {
+        SQLiteStatement statement = connection.prepare(deleteByIpQuery);
+        statement.bind(1, ip);
+        statement.step();
     }
 }

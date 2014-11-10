@@ -4,6 +4,7 @@ import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 import entity.Local;
+import entity.Temporary;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class LocalDAO {
     private static final String updateRead_atQuery = "UPDATE files SET read_at = ? WHERE fname = ? AND path = ? AND owner = ?;";
     private static final String allQuery = "SELECT * FROM files;";
     private static final String deleteFolderQuery = "DELETE FROM files WHERE path LIKE ? AND owner = ?";
+    private static final String readFromTempQuery = "SELECT * FROM files WHERE fname = ? AND path = ? AND owner = ?";
 
     public LocalDAO(SQLiteConnection connection) {
         this.connection = connection;
@@ -215,5 +217,25 @@ public class LocalDAO {
         statement.bind(1, file.getPath());
         statement.bind(2, file.getOwner());
         statement.step();
+    }
+    
+    public Local readFromTemp(Temporary temp) throws SQLiteException {
+        Local file = new Local();
+        SQLiteStatement statement = connection.prepare(readFromTempQuery);
+        if (statement.step()) {
+            file.setId((Integer) statement.columnValue(0));
+            file.setFname((String) statement.columnValue(1));
+            file.setPath((String) statement.columnValue(2));
+            file.setIs_dir((String) statement.columnValue(3));
+            file.setBody((String) statement.columnValue(4));
+            file.setFsize((Integer) statement.columnValue(5));
+            file.setFtype((String) statement.columnValue(6));
+            file.setCreated_at((String) statement.columnValue(7));
+            file.setRead_at((String) statement.columnValue(8));
+            file.setUpdated_at((String) statement.columnValue(9));
+            file.setOwner((String) statement.columnValue(10));
+        }
+
+        return file;
     }
 }
