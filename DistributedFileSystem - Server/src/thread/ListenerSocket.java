@@ -278,6 +278,19 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.RENAME_TEMP)) {
                     tempDAO.rename((Local) message.getData());
                 } else if (action.equals(Action.SERVER_DOWN)) {
+                    List<Temporary> files = tempDAO.serverDown((String) message.getData(), serverService.getMe());
+                    Message req;
+                    for (Temporary f: files) {
+                        req = new Message();
+                        req.setAction(Action.GET_FILE);
+                        req.setData(f);
+                        req.setSrc(serverService.getMe());
+                        Connection.send(f.getIp(), req);
+                    }
+                    // remover o servidor das temporary
+                    // remover do set de servidores
+                    
+                } else if (action.equals(Action.GET_FILE)) {
                     
                 }
             }
